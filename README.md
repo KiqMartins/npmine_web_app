@@ -1,1 +1,1 @@
-# npmine_web_app
+# NPMINE Web App
