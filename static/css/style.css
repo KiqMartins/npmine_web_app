@@ -1,0 +1,22 @@
+.navbar-brand {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    left: 0;
+    align-items:center;
+    height: 120px;
+    margin-left: 200px;
+}
+
+.navbar-nav, .button {
+    margin-right: 100px;
+    justify-content: center;
+  }
+
+
+  #search-bar {
+    position:absolute;
+    left: 32%;
+    top:35%;
+    width:30%;
+}
