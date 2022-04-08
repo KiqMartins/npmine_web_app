@@ -13,8 +13,7 @@
     justify-content: center;
   }
 
-
-  #search-bar {
+#search-bar {
     position:absolute;
     left: 32%;
     top:35%;
