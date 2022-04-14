@@ -2,7 +2,7 @@
 <html lang = "pt-br">
     <head>
         <meta charset = "UTF-8">
-        <title>NPMINE</title>
+        <title>{% block title %}NPMINE{% endblock %}</title>
         <!-- Favicon -->
         <link rel="icon" type="image/png" href="static/assets/img/favicon.png" sizes="192x192">
 
@@ -30,10 +30,13 @@
                       </button>
                       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                         <div class="navbar-nav">
+                            <a class="nav-link" id="home" href="/">
+                            <button type="button" class="btn btn-dark">Home</button>
+                            </a>
                             <a class="nav-link active" aria-current="page" href="#">
                                 <button type="button" class="btn btn-dark">About</button>
                             </a>
-                              <a class="nav-link" href="#">
+                              <a class="nav-link" id="login" href="/login">
                                 <button type="button" class="btn btn-outline-dark">Login</button>
                             </a>
                         </div>
