@@ -1,20 +1,28 @@
 {% extends "layout.html" %}
-{% block title %}NPMINE | Login{% endblock %}
+{% block title %}NPMINE | Sign Up{% endblock %}
 {% block logincontent %}
 <div class="container">
   <div class="row">
     <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
       <div class="card border-0 shadow rounded-3 my-5">
         <div class="card-body p-4 p-sm-5">
-          <h5 class="card-title text-center mb-5 fw-light fs-5">Sign In</h5>
+          <h5 class="card-title text-center mb-5 fw-light fs-5">Sign Up</h5>
           <form method="POST">
             <div class="form-floating mb-3">
               <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com">
               <label for="email">Email address</label>
             </div>
             <div class="form-floating mb-3">
-              <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-              <label for="password">Password</label>
+                <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter first Name">
+                <label for="firstName">First Name</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="password" class="form-control" id="password1" name="password1" placeholder="Enter password">
+              <label for="password1">Password</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm password">
+                <label for="password2">Confirm password</label>
             </div>
             <br/>
             <div class="d-grid">
