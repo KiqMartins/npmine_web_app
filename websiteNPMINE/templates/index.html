@@ -1,18 +1,66 @@
 {% extends "layout.html" %}
 {% block bannercontent %}
             <!-- Banner -->
-            <div id="content-wrapper" class="d-flex flex-column">
-                <div
-                    class="p-5 text-center bg-image"
-                    style="
-                    background-image: url('static/assets/img/pattern-removebg-preview.png');
-                    height: 400px;
-                    "
-                >
-                <div id= "search-bar" class="input-group rounded">
-                  <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-                  <span class="input-group-text border-0" id="search-addon">
-                    <i class="fa-solid fa-magnifying-glass" ></i>
-                  </span>
-                </div>
+<div id="content-wrapper" class="d-flex flex-column">
+    <div
+        class="p-5 text-center bg-image"
+        style="
+        background-image: url('static/assets/img/pattern-removebg-preview.png');
+        height: 400px;
+        "
+    >
+        <div id= "search-bar" class="input-group rounded">
+          <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+          <span class="input-group-text border-0" id="search-addon">
+            <i class="fa-solid fa-magnifying-glass" ></i>
+          </span>
+        </div>
+    </div>
+</div>
+<br>
+<section class="page-section" id="about">
+    <div class="container">
+        <h2 class="page-section-heading text-center text-uppercase mb-0" style="color: #000000">About NPMINE</h2>
+        <div class="divider-custom">
+            <div class="divider-custom-line"></div>
+            <div class="divider-custom-icon"><i class="fas fa-atom"></i></div>
+            <div class="divider-custom-line"></div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4 mb-5">
+                <img class="img-fluid" src="static/assets/img/logo.png" alt="..." />
+            </div>
+            <div class="col-md-6 col-lg-8 mb-5">
+                <p>texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto</p>
+            </div>
+        </div>
+    </div>
+</section>
+<br>
+<footer class="footer text-center" style="background-color: #000000">
+    <div class="container" style="color: #ffffff">
+        <br>
+        <div class="row">
+            <div class="col-lg-4 mb-5 mb-lg-0">
+                <h4 class="text-uppercase mb-4">Authors</h4>
+                <p class="lead mb-0">
+                    Nome da Ana
+                    <br />
+                    Outras informações
+                </p>
+            </div>
+            <div class="col-lg-4 mb-5 mb-lg-0">
+                <h4 class="text-uppercase mb-4">Download the Npmine documentation</h4>
+                <a class="btn btn-outline-dark btn-social mx-1" href="#!"><img src="static/assets/img/github.webp" width="30"><!--<i class="fas fa-download"></i>--></a>
+            </div>
+            <div class="col-lg-4">
+                <h4 class="text-uppercase mb-4">Envolvidos</h4>
+                <p class="lead mb-0">
+                    Citar a fapesp, outras menções que queira
+                </p>
+            </div>
+        </div>
+        <br>
+    </div>
+</footer>
 {% endblock bannercontent %}
