@@ -1,4 +1,11 @@
 {% extends "layout.html" %}
+<body>
+    {% block about %}
+    <a class="nav-link active" aria-current="page" href="#about">
+        <button type="button" class="btn btn-dark">About</button>
+    </a>
+    {% endblock about %}
+</body>
 {% block bannercontent %}
             <!-- Banner -->
 <div id="content-wrapper" class="d-flex flex-column">
@@ -51,7 +58,7 @@
             </div>
             <div class="col-lg-4 mb-5 mb-lg-0">
                 <h4 class="text-uppercase mb-4">Download the Npmine documentation</h4>
-                <a class="btn btn-outline-dark btn-social mx-1" href="#!"><img src="static/assets/img/github.webp" width="30"><!--<i class="fas fa-download"></i>--></a>
+                <a class="btn btn-outline-dark btn-social mx-1" href="https://github.com/computational-chemical-biology/npmine"><img src="static/assets/img/github.webp" width="30"><!--<i class="fas fa-download"></i>--></a>
             </div>
             <div class="col-lg-4">
                 <h4 class="text-uppercase mb-4">Envolvidos</h4>
