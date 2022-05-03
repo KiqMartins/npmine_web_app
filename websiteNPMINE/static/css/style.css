@@ -1,5 +1,14 @@
-.div {
-    font-family: "Helvetica";
+div {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+p {
+  align-items:center;
+  display: flex;
+  justify-content: center;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 10px;
 }
 
 .navbar-brand {
@@ -12,10 +21,17 @@
     margin-left: 200px;
 }
 
-.navbar-nav, .button {
-    margin-right: 100px;
+.navbar-nav {
+    margin-right: -20px;
     justify-content: center;
   }
+
+.button {
+  align-items:left;
+  margin-right: -20px;
+  justify-content: center;
+  position: absolute;
+}
 
 #search-bar {
     position:absolute;
@@ -36,8 +52,9 @@
   max-width: 7rem;
   height: 0.25rem;
   background-color: #000000;
-  border-radius: 1rem;
   border-color: #000000;
+  margin-top: -30px;
+  margin-bottom: -30px;
 }
 .divider-custom .divider-custom-line:first-child {
   margin-right: 0.5rem;
@@ -48,6 +65,8 @@
 .divider-custom .divider-custom-icon {
   color: #000000;
   font-size: 1.25rem;
+  margin-top: -30px;
+  margin-bottom: -30px;
 }
 .divider-custom.divider-light .divider-custom-line {
   background-color: #fff;
