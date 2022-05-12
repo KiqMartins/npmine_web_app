@@ -13,31 +13,33 @@ p {
 
 .navbar-brand {
     display: flex;
-    justify-content: center;
     width: 100%;
-    left: 0;
     align-items:center;
     height: 120px;
-    margin-left: 200px;
+    justify-content: center;
+}
+
+.npmine-navbar {
+  position: relative;
 }
 
 .navbar-nav {
     margin-right: -20px;
-    justify-content: center;
   }
 
-.button {
-  align-items:left;
-  margin-right: -20px;
-  justify-content: center;
+.navbar-collapse {
   position: absolute;
+  right: 1rem;
+}
+
+.button {
+  align-items:right;
+  margin-right: -20px;
 }
 
 #search-bar {
-    position:absolute;
-    left: 32%;
-    top:35%;
     width:30%;
+    margin: 0;
 }
 
 .divider-custom {
@@ -83,4 +85,12 @@ p {
     color: #fff;
     background-color: #212529;
     border-color: #212529;
+}
+
+.npmine-bg-image {
+  height: calc(100vh - 152px);
+  margin-top: -45px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
