@@ -1,0 +1,5 @@
+name: npmine_web_app
+dependencies:
+- pip
+  - pip:
+    - -r file:requirements.txt
