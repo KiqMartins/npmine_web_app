@@ -10,5 +10,5 @@
 **3.** Activate the environment
     ```conda activate npmine_web_app```
 
-**4.** Run the app using python
+**4.** Run the app using
     ```python app.py```
