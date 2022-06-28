@@ -3,41 +3,30 @@ from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
 import os
+from websiteNPMINE.config import Config
+from flask_bcrypt import Bcrypt
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
-DB_NAME = "test_np"
 
-def create_app():
-    app = Flask(__name__, instance_relative_config=True)
-    user = os.environ['DB_USERNAME']
-    password = os.environ['DB_PASSWORD']
+bcrypt = Bcrypt()
+login_manager = LoginManager()
+login_manager.login_view = 'main.home'
+login_manager.login_message_category = 'info'
 
-    app.config['SECRET_KEY'] = 'fbfhdfbsdkifbsuf'
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{user}:{password}@localhost/{DB_NAME}'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(Config)
+    bcrypt.init_app(app)
     db.init_app(app)
 
-    from .views import views
-    from .auth import auth
-
-    app.register_blueprint(views, url_prefix='/')
-    app.register_blueprint(auth, url_prefix='/')
-
-    from .models import Accounts
-
-    create_database(app)
-
-    login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
 
-    @login_manager.user_loader
-    def load_user(id):
-        return Accounts.query.get(int(id))
+    from websiteNPMINE.users.routes import users
+    from websiteNPMINE.main.routes import main
+    app.register_blueprint(users)
+    app.register_blueprint(main)
+
+    migrate = Migrate(app,db)
 
     return app
-
-def create_database(app):
-    if not path.exists('website/' + DB_NAME):
-        db.create_all(app=app)
-        print('Created Database!')
