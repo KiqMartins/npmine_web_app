@@ -1,3 +1,7 @@
+.search {
+  font-family: 'Quicksand', sans-serif;
+}
+
 div {
     font-family: 'Ubuntu', sans-serif;
 }
@@ -87,10 +91,6 @@ p {
     border-color: #212529;
 }
 
-.npmine-bg-image {
-  height: calc(100vh - 152px);
+.npmine-banner {
   margin-top: -45px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
 }
