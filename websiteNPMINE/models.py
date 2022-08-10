@@ -28,3 +28,46 @@ class Accounts(db.Model, UserMixin):
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}')"
+
+class Compounds(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    smiles = db.Column(db.String(150))
+    inchi = db.Column(db.String(150), unique=True)
+    inchikey = db.Column(db.String(150), unique=True)
+    exactmolwt = db.Column(db.Integer)
+    pubchem = db.Column(db.Integer, unique=True)
+    source = db.Column(db.String(10))
+    user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
+    account = db.relationship("Accounts", backref="user_id")
+
+    def __repr__(self):
+        return f'<Compounds: {self.smiles}, {self.inchi}, {self.inchi}, {self.inchikey}, {self.exactmolwt}, {self.pubchem}, {self.source}, {self.user_id}>'
+
+class Taxa(db.Model):
+     id = db.Column(db.Integer, primary_key=True)
+     verbatim = db.Column(db.String(150), unique=True)
+     classificationPath = db.Column(db.String(150))
+     classificationRank = db.Column(db.String(150))
+     user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
+     account = db.relationship("Accounts", backref="user_id")
+
+     def __repr__(self):
+        return f'<Taxa: {self.verbatim}, {self.classificationPath}, {self.classificationRank}, {self.user_id}>'
+
+class doi(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    doi = db.Column(db.String(150), unique=True)
+
+    def __repr__(self):
+        return f'<DOI: {self.doi}>'
+
+doicomp = db.Table('doicomp', 
+          db.Column('doi_id', db.Integer, db.ForeignKey('doi.id')),
+          db.Column('compounds_id', db.Integer, db.ForeignKey('compounds.id'))
+)
+
+doitaxa = db.Table('doitaxa', 
+          db.Column('doi_id', db.Integer, db.ForeignKey('doi.id')),
+          db.Column('taxa_id', db.Integer, db.ForeignKey('taxa.id'))
+)
+
