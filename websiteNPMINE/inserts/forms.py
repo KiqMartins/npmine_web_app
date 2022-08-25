@@ -9,5 +9,4 @@ class CompoundForm(FlaskForm):
     exactmolwt = StringField("Exact Molecular Weight")
     pubchem = StringField("Pubchem ID")
     source = StringField("Source")
-    doi = StringField("DOI")
     submit = SubmitField("Submit")
