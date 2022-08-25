@@ -38,7 +38,7 @@ class Compounds(db.Model):
     pubchem = db.Column(db.Integer, unique=True)
     source = db.Column(db.String(10))
     user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
-    account = db.relationship("Accounts", backref="user_id")
+    account = db.relationship("Accounts", backref="user_id_comp")
 
     def __repr__(self):
         return f'<Compounds: {self.smiles}, {self.inchi}, {self.inchi}, {self.inchikey}, {self.exactmolwt}, {self.pubchem}, {self.source}, {self.user_id}>'
@@ -49,7 +49,7 @@ class Taxa(db.Model):
      classificationPath = db.Column(db.String(150))
      classificationRank = db.Column(db.String(150))
      user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
-     account = db.relationship("Accounts", backref="user_id")
+     account = db.relationship("Accounts", backref="user_id_taxa")
 
      def __repr__(self):
         return f'<Taxa: {self.verbatim}, {self.classificationPath}, {self.classificationRank}, {self.user_id}>'
