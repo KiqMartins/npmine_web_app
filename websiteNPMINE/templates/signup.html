@@ -25,6 +25,7 @@
                             {{ form.username(class="form-control form-control-lg") }}
                         {% endif %}
                     </div>
+                    <br>
                     <div class="form-group">
                         {{ form.email.label(class="form-control-label") }}
                         {% if form.email.errors %}
@@ -38,6 +39,7 @@
                             {{ form.email(class="form-control form-control-lg") }}
                         {% endif %}
                     </div>
+                    <br>
                     <div class="form-group">
                         {{ form.password.label(class="form-control-label") }}
                         {% if form.password.errors %}
@@ -51,6 +53,7 @@
                             {{ form.password(class="form-control form-control-lg") }}
                         {% endif %}
                     </div>
+                    <br>
                     <div class="form-group">
                         {{ form.confirm_password.label(class="form-control-label") }}
                         {% if form.confirm_password.errors %}
@@ -65,11 +68,13 @@
                         {% endif %}
                     </div>
                 </fieldset>
+                <br>
                 <div class="form-group">
                     {{ form.submit(class="btn btn-dark") }}
                 </div>
             </form>
         </div>
+        <br>
         <div class="border-top pt-3">
             <small class="text-muted">
                 Already Have An Account? <a class="ml-2" href="{{ url_for('users.login') }}">Sign In</a>
