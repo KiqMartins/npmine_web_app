@@ -24,8 +24,10 @@ def create_app(config_class=Config):
 
     from websiteNPMINE.users.routes import users
     from websiteNPMINE.main.routes import main
+    from websiteNPMINE.inserts.routes import inserts
     app.register_blueprint(users)
     app.register_blueprint(main)
+    app.register_blueprint(inserts)
 
     migrate = Migrate(app,db)
 
