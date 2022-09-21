@@ -34,10 +34,16 @@
       </tr>
     </thead>
     <tbody>
+        {% for comp in compounds %}
       <tr>
-        <td>Test</td>
-        <td>Test</td>
+        <td>{{ comp['id'] }}</td>
+        <td>{{ comp['smiles'] }}</td>
+        <td>{{ comp['inchi'] }}</td>
+        <td>{{ comp['inchikey'] }}</td>
+        <td>{{ comp['exactmolwt'] }}</td>
+        <td>{{ comp['pubchem'] }}</td>
       </tr>
+      {% endfor %}
     </tbody>
   </table>
 </div>
@@ -91,6 +97,6 @@
       $(document).ready(function(){
           $('#myTable').dataTable();
       });
-      </script>
+    </script>
 </footer>
 {% endblock bannercontent %}

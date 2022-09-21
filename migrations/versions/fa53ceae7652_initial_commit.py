@@ -1,8 +1,8 @@
-"""initial tables
+"""initial commit
 
-Revision ID: 1b743ad9b749
+Revision ID: fa53ceae7652
 Revises: 
-Create Date: 2022-08-18 09:39:45.537783
+Create Date: 2022-09-19 16:33:51.027682
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1b743ad9b749'
+revision = 'fa53ceae7652'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -35,18 +35,15 @@ def upgrade():
     )
     op.create_table('compounds',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('smiles', sa.String(length=150), nullable=True),
-    sa.Column('inchi', sa.String(length=150), nullable=True),
-    sa.Column('inchikey', sa.String(length=150), nullable=True),
+    sa.Column('smiles', sa.String(length=500), nullable=True),
+    sa.Column('inchi', sa.String(length=500), nullable=True),
+    sa.Column('inchikey', sa.String(length=500), nullable=True),
     sa.Column('exactmolwt', sa.Integer(), nullable=True),
     sa.Column('pubchem', sa.Integer(), nullable=True),
     sa.Column('source', sa.String(length=10), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['accounts.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('inchi'),
-    sa.UniqueConstraint('inchikey'),
-    sa.UniqueConstraint('pubchem')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('taxa',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -55,8 +52,7 @@ def upgrade():
     sa.Column('classificationRank', sa.String(length=150), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['accounts.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('verbatim')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('doicomp',
     sa.Column('doi_id', sa.Integer(), nullable=True),
