@@ -23,6 +23,7 @@
                       {{ form.smiles(class="form-control form-control-lg") }}
                   {% endif %}
               </div>
+              <br>
               <div class="form-group">
                   {{ form.inchi.label(class="form-control-label") }}
                   {% if form.inchi.errors %}
@@ -36,6 +37,7 @@
                       {{ form.inchi(class="form-control form-control-lg") }}
                   {% endif %}
               </div>
+              <br>
               <div class="form-group">
                 {{ form.inchikey.label(class="form-control-label") }}
                 {% if form.inchikey.errors %}
@@ -49,6 +51,7 @@
                     {{ form.inchikey(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
+            <br>
             <div class="form-group">
                 {{ form.exactmolwt.label(class="form-control-label") }}
                 {% if form.exactmolwt.errors %}
@@ -62,6 +65,7 @@
                     {{ form.exactmolwt(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
+            <br>
             <div class="form-group">
                 {{ form.pubchem.label(class="form-control-label") }}
                 {% if form.pubchem.errors %}
@@ -75,6 +79,7 @@
                     {{ form.pubchem(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
+            <br>
             <div class="form-group">
                 {{ form.source.label(class="form-control-label") }}
                 {% if form.source.errors %}
@@ -88,6 +93,7 @@
                     {{ form.source(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
+            <br>
           </fieldset>
           <div class="form-group">
               {{ form.submit(class="btn btn-dark") }}

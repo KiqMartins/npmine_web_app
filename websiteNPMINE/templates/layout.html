@@ -18,6 +18,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
     </head>
     <body>
         <header>
@@ -48,7 +49,7 @@
                         <a class="nav-link" id="login" href="/logout">
                           <button type="button" class="btn btn-outline-dark">Logout</button>
                         </a>
-                        <p style="text-align:center">{{ current_user.first_name }}</p>
+                        <p style="text-align:center">Hello, {{ current_user.username }}!</p>
                         {% else %}
                         <a class="nav-link" id="login" href="/login">
                           <button type="button" class="btn btn-outline-dark">Login</button>

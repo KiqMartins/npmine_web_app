@@ -31,11 +31,11 @@ class Accounts(db.Model, UserMixin):
 
 class Compounds(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    smiles = db.Column(db.String(150))
-    inchi = db.Column(db.String(150), unique=True)
-    inchikey = db.Column(db.String(150), unique=True)
+    smiles = db.Column(db.String(500))
+    inchi = db.Column(db.String(500))
+    inchikey = db.Column(db.String(500))
     exactmolwt = db.Column(db.Integer)
-    pubchem = db.Column(db.Integer, unique=True)
+    pubchem = db.Column(db.Integer)
     source = db.Column(db.String(10))
     user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
     account = db.relationship("Accounts", backref="user_id_comp")
@@ -45,7 +45,7 @@ class Compounds(db.Model):
 
 class Taxa(db.Model):
      id = db.Column(db.Integer, primary_key=True)
-     verbatim = db.Column(db.String(150), unique=True)
+     verbatim = db.Column(db.String(150))
      classificationPath = db.Column(db.String(150))
      classificationRank = db.Column(db.String(150))
      user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
