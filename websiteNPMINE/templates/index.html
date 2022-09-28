@@ -26,9 +26,7 @@
       <tr>
         <th scope="col">ID</th>
         <th scope="col">SMILES</th>
-        <th scope="col">InChI</th>
         <th scope="col">InChI Key</th>
-        <th scope="col">Molecular Weight</th>
         <th scope="col">PubChem ID</th>
         <th scope="col">Structure</th>
       </tr>
@@ -38,9 +36,7 @@
       <tr>
         <td>{{ comp['id'] }}</td>
         <td>{{ comp['smiles'] }}</td>
-        <td>{{ comp['inchi'] }}</td>
         <td>{{ comp['inchikey'] }}</td>
-        <td>{{ comp['exactmolwt'] }}</td>
         <td>{{ comp['pubchem'] }}</td>
       </tr>
       {% endfor %}

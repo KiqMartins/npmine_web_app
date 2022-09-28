@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
-{% block title %}NPMINE | New Compound{% endblock %}
+{% block title %}NPMINE | Register Compound{% endblock %}
 {% block newcompoundcontent %}
 <div class="container">
   <div class="row">
     <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
       <div class="card border-0 shadow rounded-3 my-5">
         <div class="card-body p-4 p-sm-5">
-          <h5 class="card-title text-center mb-5 fw-light fs-5">Add New Compound</h5>
+          <h5 class="card-title text-center mb-5 fw-light fs-5">Register Compound</h5>
           <form method="POST" action="">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
@@ -53,20 +53,6 @@
             </div>
             <br>
             <div class="form-group">
-                {{ form.exactmolwt.label(class="form-control-label") }}
-                {% if form.exactmolwt.errors %}
-                    {{ form.exactmolwt(class="form-control form-control-lg is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.exactmolwt.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.exactmolwt(class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <br>
-            <div class="form-group">
                 {{ form.pubchem.label(class="form-control-label") }}
                 {% if form.pubchem.errors %}
                     {{ form.pubchem(class="form-control form-control-lg is-invalid") }}
@@ -80,19 +66,8 @@
                 {% endif %}
             </div>
             <br>
-            <div class="form-group">
-                {{ form.source.label(class="form-control-label") }}
-                {% if form.source.errors %}
-                    {{ form.source(class="form-control form-control-lg is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.source.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.source(class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
+            <label for="userid">User ID:</label>
+            <input type="text" class="form-control" name="userid"  value="{{current_user.username}}">
             <br>
           </fieldset>
           <div class="form-group">
