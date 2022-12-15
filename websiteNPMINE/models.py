@@ -31,9 +31,10 @@ class Accounts(db.Model, UserMixin):
 
 class Compounds(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    smiles = db.Column(db.String(500))
-    inchi = db.Column(db.String(500))
-    inchikey = db.Column(db.String(500))
+    id_comp = db.Column(db.String(50))
+    smiles = db.Column(db.String(5000))
+    inchi = db.Column(db.String(5000))
+    inchikey = db.Column(db.String(5000))
     exactmolwt = db.Column(db.Integer)
     pubchem = db.Column(db.Integer)
     source = db.Column(db.String(10))

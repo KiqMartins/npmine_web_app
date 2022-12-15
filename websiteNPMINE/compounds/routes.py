@@ -37,7 +37,7 @@ def registerCompound():
         #check inchikey
         compoundToView = db.session.query(Compounds).filter_by(inchikey=inchikey).all()
         if len(compoundToView):
-            flash('Compound %s already registered' % compoundToView[0].inchikey)
+            flash('Compound %s already registered' % compoundToView[0].inchikey, 'error')
             return redirect(url_for('main.home'))
 
         d = cpd2prop(inchikey)
@@ -64,4 +64,8 @@ def registerCompound():
     return render_template('new_compound.html',
                            form=form)
 
+@compounds.route('/home/<int:id>/edit', methods=['GET', 'POST'])
+@login_required
+def editCompound(id):
+    return render_template('editCompound.html')
 
