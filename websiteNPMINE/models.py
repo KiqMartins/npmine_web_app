@@ -42,7 +42,20 @@ class Compounds(db.Model):
     account = db.relationship("Accounts", backref="user_id_comp")
 
     def __repr__(self):
-        return f'<Compounds: {self.smiles}, {self.inchi}, {self.inchi}, {self.inchikey}, {self.exactmolwt}, {self.pubchem}, {self.source}, {self.user_id}>'
+        return f'Compounds: {self.id_comp}'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'id_comp': self.id_comp,
+            'smiles': self.smiles,
+            'inchi': self.inchi,
+            'inchikey': self.inchikey,
+            'exactmolwt': self.exactmolwt,
+            'pubchem': self.pubchem,
+            'source': self.source,
+            'user_id': self.user_id
+        }
 
 class Taxa(db.Model):
      id = db.Column(db.Integer, primary_key=True)
