@@ -49,3 +49,7 @@ def data():
         'data': [compounds.to_dict() for compounds in query],
         'total': total,
     }
+
+@main.route('/layout')
+def layout():
+    return render_template("layout_test.html")
