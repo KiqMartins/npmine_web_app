@@ -18,7 +18,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
+        <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
     </head>
     <body>
         <header>
@@ -34,7 +34,7 @@
                   </button>
                   
                   <div class="collapse navbar-collapse">
-                    <div class="navbar-nav">
+                    <div class="navbar-nav ms-auto">
                         <a class="nav-link" id="home" href="/">
                         <button type="button" class="btn btn-dark">Home</button>
                         </a>
@@ -49,7 +49,7 @@
                         <a class="nav-link" id="login" href="/logout">
                           <button type="button" class="btn btn-outline-dark">Logout</button>
                         </a>
-                        <p style="text-align:center">Hello, {{ current_user.username }}!</p>
+                        <p id="user_greeting" style="text-align:center">Hello, {{ current_user.username }}!</p>
                         {% else %}
                         <a class="nav-link" id="login" href="/login">
                           <button type="button" class="btn btn-outline-dark">Login</button>

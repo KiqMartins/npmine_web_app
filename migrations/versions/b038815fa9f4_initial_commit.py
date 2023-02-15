@@ -1,8 +1,8 @@
 """initial commit
 
-Revision ID: fa53ceae7652
+Revision ID: b038815fa9f4
 Revises: 
-Create Date: 2022-09-19 16:33:51.027682
+Create Date: 2023-01-11 20:39:15.137056
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fa53ceae7652'
+revision = 'b038815fa9f4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -35,9 +35,10 @@ def upgrade():
     )
     op.create_table('compounds',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('smiles', sa.String(length=500), nullable=True),
-    sa.Column('inchi', sa.String(length=500), nullable=True),
-    sa.Column('inchikey', sa.String(length=500), nullable=True),
+    sa.Column('id_comp', sa.String(length=50), nullable=True),
+    sa.Column('smiles', sa.String(length=5000), nullable=True),
+    sa.Column('inchi', sa.String(length=5000), nullable=True),
+    sa.Column('inchikey', sa.String(length=5000), nullable=True),
     sa.Column('exactmolwt', sa.Integer(), nullable=True),
     sa.Column('pubchem', sa.Integer(), nullable=True),
     sa.Column('source', sa.String(length=10), nullable=True),

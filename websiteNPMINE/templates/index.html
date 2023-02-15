@@ -5,7 +5,7 @@
         <button type="button" class="btn btn-dark">About</button>
     </a>
     {% endblock about %}
-</body>
+
 {% block bannercontent %}
 <!-- Banner -->
 <div class="container">
@@ -21,29 +21,58 @@
 </div>
 </div>
 <div class="container">
-  <table id="myTable" class="table">
-    <thead>
-      <tr>
-        <th scope="col">ID</th>
-        <th scope="col">SMILES</th>
-        <th scope="col">InChI Key</th>
-        <th scope="col">PubChem ID</th>
-        <th scope="col">Structure</th>
-      </tr>
-    </thead>
-    <tbody>
-        {% for comp in compounds %}
-      <tr>
-        <td>{{ comp['id'] }}</td>
-        <td>{{ comp['smiles'] }}</td>
-        <td>{{ comp['inchikey'] }}</td>
-        <td>{{ comp['pubchem'] }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-</footer>
+    <hr>
+    <div id="table"></div>
+  </div>
+  <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+  <script>
+    const updateUrl = (prev, query) => {
+      return prev + (prev.indexOf('?') >= 0 ? '&' : '?') + new URLSearchParams(query).toString();
+    };
+
+    new gridjs.Grid({
+      columns: [
+        { id: 'id_comp', name: 'ID' },
+        { id: 'smiles', name: 'SMILES' },
+        { id: 'inchikey', name: 'InChI Key', sort: false },
+        { id: 'pubchem', name: 'PubChem ID', formatter: (cell, row) => {
+          return gridjs.html('<a href="https://pubchem.ncbi.nlm.nih.gov/compound/' + cell + '">' + cell + '</a>');
+        }},
+      ],
+      server: {
+        url: '/api/data',
+        then: results => results.data,
+        total: results => results.total,
+      },
+      search: {
+        enabled: true,
+        server: {
+          url: (prev, search) => {
+            return updateUrl(prev, {search});
+          },
+        },
+      },
+      sort: {
+        enabled: true,
+        multiColumn: true,
+        server: {
+          url: (prev, columns) => {
+            const columnIds = ['id_comp', 'smiles', 'inchikey', 'pubchem'];
+            const sort = columns.map(col => (col.direction === 1 ? '+' : '-') + columnIds[col.index]);
+            return updateUrl(prev, {sort});
+          },
+        },
+      },
+      pagination: {
+        enabled: true,
+        server: {
+          url: (prev, page, limit) => {
+            return updateUrl(prev, {start: page * limit, length: limit});
+          },
+        },
+      },
+    }).render(document.getElementById('table'));
+  </script>
 <br>
 <section class="page-section" id="about">
     <div class="container">
@@ -55,6 +84,7 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-4 mb-5">
+              <img class="img-fluid" src="static/assets/img/logo.png" alt="..." />
             </div>
             <div class="col-md-6 col-lg-8 mb-5">
                 <p>texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto</p>

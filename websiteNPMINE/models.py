@@ -31,9 +31,10 @@ class Accounts(db.Model, UserMixin):
 
 class Compounds(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    smiles = db.Column(db.String(500))
-    inchi = db.Column(db.String(500))
-    inchikey = db.Column(db.String(500))
+    id_comp = db.Column(db.String(50))
+    smiles = db.Column(db.String(5000))
+    inchi = db.Column(db.String(5000))
+    inchikey = db.Column(db.String(5000))
     exactmolwt = db.Column(db.Integer)
     pubchem = db.Column(db.Integer)
     source = db.Column(db.String(10))
@@ -41,7 +42,20 @@ class Compounds(db.Model):
     account = db.relationship("Accounts", backref="user_id_comp")
 
     def __repr__(self):
-        return f'<Compounds: {self.smiles}, {self.inchi}, {self.inchi}, {self.inchikey}, {self.exactmolwt}, {self.pubchem}, {self.source}, {self.user_id}>'
+        return f'Compounds: {self.id_comp}'
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'id_comp': self.id_comp,
+            'smiles': self.smiles,
+            'inchi': self.inchi,
+            'inchikey': self.inchikey,
+            'exactmolwt': self.exactmolwt,
+            'pubchem': self.pubchem,
+            'source': self.source,
+            'user_id': self.user_id
+        }
 
 class Taxa(db.Model):
      id = db.Column(db.Integer, primary_key=True)

@@ -1,12 +1,12 @@
-.search {
+/* .search {
   font-family: 'Quicksand', sans-serif;
 }
 
 div {
     font-family: 'Ubuntu', sans-serif;
-}
+} */
 
-p {
+#user_greeting {
   align-items:center;
   display: flex;
   justify-content: center;
@@ -15,7 +15,7 @@ p {
   margin-top: 10px;
 }
 
-.navbar-brand {
+/* .navbar-brand {
     display: flex;
     width: 100%;
     align-items:center;
@@ -25,21 +25,21 @@ p {
 
 .npmine-navbar {
   position: relative;
-}
+} */
 
-.navbar-nav {
+/* .navbar-nav {
     margin-right: -20px;
   }
 
 .navbar-collapse {
   position: absolute;
   right: 1rem;
-}
+} */
 
-.button {
+/* .button {
   align-items:right;
   margin-right: -20px;
-}
+} */
 
 #search-bar {
     width:30%;
@@ -62,7 +62,7 @@ p {
   margin-top: -30px;
   margin-bottom: -30px;
 }
-.divider-custom .divider-custom-line:first-child {
+/* .divider-custom .divider-custom-line:first-child {
   margin-right: 0.5rem;
 }
 .divider-custom .divider-custom-line:last-child {
@@ -79,18 +79,18 @@ p {
 }
 .divider-custom.divider-light .divider-custom-icon {
   color: #fff;
-}
-.btn-outline-dark {
+} */
+/* .btn-outline-dark {
     color: #212529;
     border-color: #212529;
     box-shadow: 0 0 0 0.25rem rgba(33, 37, 41, 0.5);
-}
-.btn-outline-dark {
+} */
+/* .btn-outline-dark {
     color: #fff;
     background-color: #212529;
     border-color: #212529;
-}
+} */
 
-.npmine-banner {
+/* .npmine-banner {
   margin-top: -45px;
 }
