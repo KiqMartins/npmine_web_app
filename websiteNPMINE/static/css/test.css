@@ -1,3 +1,16 @@
+.navbar-brand-centered {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* CSS to align navbar links to right when toggler is active on small screens */
+@media (max-width: 576px) {
+  .navbar-nav {
+    justify-content: flex-end;
+  }
+}
+
 .search {
   font-family: 'Quicksand', sans-serif;
 }
@@ -13,32 +26,6 @@ div {
   margin-left: 5px;
   margin-right: 5px;
   margin-top: 10px;
-}
-
-.navbar-brand {
-    display: flex;
-    width: 100%;
-    align-items:center;
-    height: 120px;
-    justify-content: center;
-}
-
-.npmine-navbar {
-  position: relative;
-} */
- 
-.navbar-nav {
-    margin-right: -20px;
-  }
-
-.navbar-collapse {
-  position: absolute;
-  right: 1rem;
-}
-
-.button {
-  align-items:right;
-  margin-right: -20px;
 }
 
 #search-bar {
@@ -80,17 +67,3 @@ div {
 .divider-custom.divider-light .divider-custom-icon {
   color: #fff;
 }
-.btn-outline-dark {
-    color: #212529;
-    border-color: #212529;
-    box-shadow: 0 0 0 0.25rem rgba(33, 37, 41, 0.5);
-}
-.btn-outline-dark {
-    color: #fff;
-    background-color: #212529;
-    border-color: #212529;
-}
-
-.npmine-banner {
-  margin-top: -45px;
-} 
