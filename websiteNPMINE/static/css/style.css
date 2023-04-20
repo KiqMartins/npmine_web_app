@@ -72,3 +72,13 @@ div {
   }
 }
 
+#table .id-column,
+#table .smiles-column,
+#table .inchikey-column,
+#table .pubchem-column {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
