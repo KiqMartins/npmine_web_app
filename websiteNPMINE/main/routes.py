@@ -50,6 +50,3 @@ def data():
         'total': total,
     }
 
-@main.route('/layout')
-def layout():
-    return render_template("layout_test.html")
