@@ -3,7 +3,7 @@
     <head>
         <meta charset = "UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-        <title>{% block title %}NPMINE{% endblock %}</title>
+        <title>{% block title %}NPMINE Online Database{% endblock %}</title>
         <!-- Favicon -->
         <link rel="icon" type="image/png" href="static/assets/img/favicon.png" sizes="192x192">
         <!-- Icons -->
@@ -18,22 +18,24 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=News+Cycle&display=swap" rel="stylesheet">
         <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
     </head>
     <body>
         <header>
             <!-- Navigation Bar -->
             <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light shadow p-3 mb-5 bg-white rounded">
-                <div class="container-fluid npmine-navbar">
-                  <a class="navbar-brand" href="/">
-                    <img src="/static/assets/img/logo.png" alt="NPMINE Logo" height="80">
-                  </a>
+              <div class="container">
+                <a class="navbar-brand navbar-brand-centered" href="/">
+                  <img src="/static/assets/img/logo.png" height="60" class="d-inline-block align-top" alt="NPMINE Online Database">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
                   
-                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                  </button>
-                  
-                  <div class="collapse navbar-collapse">
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <div class="navbar-nav ms-auto">
                         <a class="nav-link" id="home" href="/">
                         <button type="button" class="btn btn-dark">Home</button>
