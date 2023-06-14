@@ -6,7 +6,7 @@ import os
 from websiteNPMINE.config import Config
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
-from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap4
 
 db = SQLAlchemy()
 
@@ -14,7 +14,7 @@ bcrypt = Bcrypt()
 login_manager = LoginManager()
 login_manager.login_view = 'main.home'
 login_manager.login_message_category = 'info'
-bootstrap = Bootstrap()
+bootstrap = Bootstrap4()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
