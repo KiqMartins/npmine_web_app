@@ -10,6 +10,23 @@ div {
     font-family: 'Ubuntu', sans-serif;
 } 
 
+.search-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 15cm;
+  margin: 0 auto;
+}
+
+.search-input {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.submit-btn {
+  width: auto;
+}
+
 #user_greeting {
   align-items:center;
   display: flex;
@@ -17,11 +34,6 @@ div {
   margin-left: 5px;
   margin-right: 5px;
   margin-top: 10px;
-}
-
-#search-bar {
-    width:30%;
-    margin: 0;
 }
 
 .divider-custom {

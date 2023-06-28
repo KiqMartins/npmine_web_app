@@ -9,17 +9,26 @@
 {% block bannercontent %}
 <!-- Banner -->
 <div class="container">
-<div class="jumbotron p-3 py-3 pt-md-5 pb-md-4 mx-auto text-center text-white rounded bg-dark npmine-banner">
-        <h1 class="search display-4 font-italic">Search</h1>
-        <p class="search" style="font-size: 25px;">Explore chemical and taxonomic entities extracted by NPMINE</p>
-        <div id= "search-bar" class="p-3 py-3 pt-md-5 pb-md-4 mx-auto text-center input-group rounded">
-            <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-            <span class="input-group-text border-0" id="search-addon">
-              <i class="fa-solid fa-magnifying-glass" ></i>
-            </span>
-        </div>
+  <div class="jumbotron p-3 py-3 pt-md-5 pb-md-4 mx-auto text-center text-white rounded bg-dark npmine-banner">
+    <h1 class="search display-4 font-italic">Search</h1>
+    <p class="search" style="font-size: 25px;">Explore chemical and taxonomic entities extracted by NPMINE</p>
+    <form id="search-form" class="form-inline justify-content-center mt-4 search-form" action="/search" method="GET">
+      <div class="input-group">
+        <input type="text" class="form-control search-input" id="search-input" name="q" placeholder="Search">
+        <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+      </div>
+    </form>
+  </div>
 </div>
-</div>
+<script>
+  $(document).ready(function() {
+    $('#search-form').submit(function(e) {
+      e.preventDefault();
+      var searchQuery = $('#search-input').val();
+      window.location.href = '/api/data?search=' + encodeURIComponent(searchQuery);
+    });
+  });
+</script>
 <div class="container">
     <hr>
     <div id="table"></div>
@@ -31,33 +40,36 @@
     };
 
     new gridjs.Grid({
-      columns: [
-        { id: 'id_comp', name: 'ID' },
-        { id: 'smiles', name: 'SMILES' },
-        { id: 'inchikey', name: 'InChI Key', sort: false },
-        { id: 'pubchem', name: 'PubChem ID', formatter: (cell, row) => {
-          return gridjs.html('<a href="https://pubchem.ncbi.nlm.nih.gov/compound/' + cell + '">' + cell + '</a>');
-        }},
-      ],
+  columns: [
+    {
+      id: 'id',
+      name: 'ID',
+      sort: false, 
+      formatter: (cell, row) => {
+        return gridjs.html('<a href="/compound/' + cell + '">' + cell + '</a>');
+      }
+    },
+    { id: 'inchikey', name: 'InChI Key', sort: false },
+    {
+      id: 'pubchem',
+      name: 'PubChem ID',
+      sort: false,
+      formatter: (cell, row) => {
+        return gridjs.html('<a href="https://pubchem.ncbi.nlm.nih.gov/compound/' + cell + '">' + cell + '</a>');
+      }
+    },
+  ],
       server: {
         url: '/api/data',
         then: results => results.data,
         total: results => results.total,
-      },
-      search: {
-        enabled: true,
-        server: {
-          url: (prev, search) => {
-            return updateUrl(prev, {search});
-          },
-        },
       },
       sort: {
         enabled: true,
         multiColumn: true,
         server: {
           url: (prev, columns) => {
-            const columnIds = ['id_comp', 'smiles', 'inchikey', 'pubchem'];
+            const columnIds = ['id','inchikey', 'pubchem'];
             const sort = columns.map(col => (col.direction === 1 ? '+' : '-') + columnIds[col.index]);
             return updateUrl(prev, {sort});
           },
