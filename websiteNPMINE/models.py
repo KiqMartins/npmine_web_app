@@ -28,6 +28,23 @@ class Accounts(db.Model, UserMixin):
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}')"
+    
+class DOI(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    doi = db.Column(db.String(150), unique=True)
+
+    def __repr__(self):
+        return f'<DOI: {self.doi}>'
+
+doicomp = db.Table('doicomp', 
+          db.Column('doi_id', db.Integer, db.ForeignKey('doi.id')),
+          db.Column('compounds_id', db.Integer, db.ForeignKey('compounds.id'))
+)
+
+doitaxa = db.Table('doitaxa', 
+          db.Column('doi_id', db.Integer, db.ForeignKey('doi.id')),
+          db.Column('taxa_id', db.Integer, db.ForeignKey('taxa.id'))
+)
 
 class Compounds(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,6 +57,7 @@ class Compounds(db.Model):
     inchi = db.Column(db.String(5000))
     source = db.Column(db.String(10))
     user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
+    doicomp = db.relationship('DOI', secondary=doicomp, backref=db.backref('compounds', lazy='dynamic'))
     account = db.relationship("Accounts", backref="compounds")
 
     def __repr__(self):
@@ -75,20 +93,5 @@ class Taxa(db.Model):
     def __repr__(self):
         return f'<Taxa: {self.verbatim}, {self.article_url}, {self.classificationpath}, {self.classificationrank}, {self.user_id}>'
 
-class DOI(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    doi = db.Column(db.String(150), unique=True)
 
-    def __repr__(self):
-        return f'<DOI: {self.doi}>'
-
-doicomp = db.Table('doicomp', 
-          db.Column('doi_id', db.Integer, db.ForeignKey('doi.id')),
-          db.Column('compounds_id', db.Integer, db.ForeignKey('compounds.id'))
-)
-
-doitaxa = db.Table('doitaxa', 
-          db.Column('doi_id', db.Integer, db.ForeignKey('doi.id')),
-          db.Column('taxa_id', db.Integer, db.ForeignKey('taxa.id'))
-)
 

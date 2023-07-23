@@ -31,37 +31,83 @@
   });
 </script>
 <div class="container w-50 p-3">
-    <table class="table table-bordered">
-        <tbody>
-            <tr>
-                <th scope="row">Compound Name</th>
-                <td></td>
-              </tr>
-          <tr>
+  <table class="table table-bordered">
+    <tbody>
+        <tr>
+            <th scope="row">Compound Name</th>
+            <td>{{ compound_name }}</td>
+        </tr>
+        <tr>
             <th scope="row">ID</th>
             <td>{{ compound_id }}</td>
-          </tr>
-          <tr>
-            <tr>
-                <th scope="row">Exact Molecular Weight</th>
-                <td>{{ exact_mol_weight }}</td>
-              </tr>
+        </tr>
+        <tr>
+            <th scope="row">Compound Image</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">Exact Molecular Weight</th>
+            <td>{{ exact_mol_weight }}</td>
+        </tr>
+        <tr>
             <th scope="row">InChI</th>
             <td>{{ inchi }}</td>
-          </tr>
-          <tr>
+        </tr>
+        <tr>
             <th scope="row">InChI Key</th>
             <td>{{ inchi_key }}</td>
-          </tr>
-          <tr>
+        </tr>
+        <tr>
             <th scope="row">PubChem ID</th>
             <td>{{ pubchem_id }}</td>
-          </tr>
-          <tr>
-            <th scope="row">Article</th>
-            <td>{{ doi }}</td>
-          </tr>
-        </tbody>
-      </table>
+        </tr>
+        <tr>
+            <th scope="row">Articles</th>
+            <td>
+                <ul>
+                    {% for article in articles %}
+                    <li>
+                        <a href="{{ article }}" target="_blank">{{ article }}</a>
+                    </li>
+                    {% endfor %}
+              </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Additional Information</h2>
+<table class="table table-bordered">
+    <tbody>
+        <tr>
+            <th scope="row">Molecular Formula</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">XLogP</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">Exact Mass</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">Kingdom</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">Superclass</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">Class</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">Subclass</th>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
 </div>
 {% endblock %}
