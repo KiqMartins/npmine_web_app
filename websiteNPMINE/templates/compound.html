@@ -1,0 +1,113 @@
+{% extends "layout.html" %}
+<body>
+    {% block about %}
+    <a class="nav-link active" aria-current="page" href="#about">
+        <button type="button" class="btn btn-dark">About</button>
+    </a>
+    {% endblock about %}
+
+{% block bannercontent %}
+<!-- Banner -->
+<div class="container">
+  <div class="jumbotron p-3 py-3 pt-md-5 pb-md-4 mx-auto text-center text-white rounded bg-dark npmine-banner">
+    <h1 class="search display-4 font-italic">Search</h1>
+    <p class="search" style="font-size: 25px;">Explore chemical and taxonomic entities extracted by NPMINE</p>
+    <form id="search-form" class="form-inline justify-content-center mt-4 search-form">
+      <div class="input-group">
+        <input type="text" class="form-control search-input" id="search-input" name="search" placeholder="Search">
+        <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#search-form').submit(function(e) {
+      e.preventDefault();
+      var searchQuery = $('#search-input').val();
+      window.location.href = '/api/data?search=' + encodeURIComponent(searchQuery);
+    });
+  });
+</script>
+<div class="container w-50 p-3">
+  <table class="table table-bordered">
+    <tbody>
+        <tr>
+            <th scope="row">Compound Name</th>
+            <td>{{ compound_name }}</td>
+        </tr>
+        <tr>
+            <th scope="row">ID</th>
+            <td>{{ compound_id }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Compound Image</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">Exact Molecular Weight</th>
+            <td>{{ exact_mol_weight }}</td>
+        </tr>
+        <tr>
+            <th scope="row">InChI</th>
+            <td>{{ inchi }}</td>
+        </tr>
+        <tr>
+            <th scope="row">InChI Key</th>
+            <td>{{ inchi_key }}</td>
+        </tr>
+        <tr>
+            <th scope="row">PubChem ID</th>
+            <td>{{ pubchem_id }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Articles</th>
+            <td>
+                <ul>
+                    {% for article in articles %}
+                    <li>
+                        <a href="{{ article }}" target="_blank">{{ article }}</a>
+                    </li>
+                    {% endfor %}
+              </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Additional Information</h2>
+<table class="table table-bordered">
+    <tbody>
+        <tr>
+            <th scope="row">Molecular Formula</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">XLogP</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">Exact Mass</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">Kingdom</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">Superclass</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">Class</th>
+            <td></td>
+        </tr>
+        <tr>
+            <th scope="row">Subclass</th>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+</div>
+{% endblock %}

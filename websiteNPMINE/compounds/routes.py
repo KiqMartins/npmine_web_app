@@ -6,7 +6,6 @@ from websiteNPMINE import db
 import os
 import json
 import requests
-from rdkit import Chem
 from websiteNPMINE.compounds.utils import *
 
 compounds = Blueprint('inserts', __name__)

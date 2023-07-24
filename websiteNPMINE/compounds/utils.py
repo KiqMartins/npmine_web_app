@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-from rdkit import Chem
 import json
 
 def cpd2prop(inchikey):
