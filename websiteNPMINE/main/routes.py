@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, abort, redirect, url_for
+from flask import Blueprint, render_template, request, jsonify, abort, redirect, url_for,flash
 from flask_login import login_required, current_user, login_user, logout_user
 from websiteNPMINE.models import Compounds, DOI, Accounts
 from websiteNPMINE import db
@@ -12,6 +12,15 @@ def home():
     logged_in = current_user.is_authenticated  # Check if the user is logged in
     return render_template("index.html", logged_in=logged_in)
 
+def fetch_structure_image(inchikey):
+    cactus_api_url = f"https://cactus.nci.nih.gov/chemical/structure/{inchikey}/image"
+    response = requests.get(cactus_api_url)
+    
+    if response.status_code == 200:
+        return response.url
+    else:
+        return None
+    
 @main.route('/api/data')
 def data():
     # Pagination parameters
@@ -53,6 +62,7 @@ def data():
         compound_data = compound.to_dict()
         compound_data['id'] = compound.id
         inchi = compound.inchi
+        inchikey = compound.inchi_key
 
         # Append edit and delete buttons based on authentication status
         if current_user.is_authenticated:
@@ -92,6 +102,27 @@ def compound(compound_id):
         articles=articles
     )
 
+@main.route('/compound/<int:compound_id>/delete', methods=['POST'])
+@login_required
+def delete_compound(compound_id):
+    # Find the compound to delete
+    compound = Compounds.query.get_or_404(compound_id)
+
+    # Check if the current user has permission to delete the compound
+    if not current_user.role_id == 1 and current_user.id != compound.user_id:
+        flash("You don't have permission to delete this compound.", "error")
+        return redirect(url_for('main.home'))
+
+    try:
+        # Delete the compound from the database
+        db.session.delete(compound)
+        db.session.commit()
+        flash("Compound deleted successfully.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash("An error occurred while deleting the compound.", "error")
+
+    return redirect(url_for('main.home'))
 
 
 
