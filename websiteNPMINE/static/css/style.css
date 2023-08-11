@@ -94,3 +94,28 @@ div {
   white-space: nowrap;
 }
 
+/* Make all links black and add underline animation on hover and active states */
+.navbar-nav .nav-link {
+  color: black;
+  text-decoration: none;
+  position: relative;
+}
+
+.navbar-nav .nav-link::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: -2px;
+  background-color: black;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+
+.navbar-nav .nav-link:hover::before,
+.navbar-nav .nav-link:active::before {
+  transform: scaleX(1);
+}
+
+

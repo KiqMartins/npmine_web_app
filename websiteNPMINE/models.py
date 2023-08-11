@@ -2,17 +2,29 @@ from . import db, login_manager
 from flask_login import UserMixin
 from itsdangerous import TimedSerializer as Serializer
 from flask import current_app
+from datetime import datetime
 
 @login_manager.user_loader
 def load_user(user_id):
     return Accounts.query.get(int(user_id))
 
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f'<Role: {self.name}>'
+
 class Accounts(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(60), nullable=False)
+    password = db.Column(db.String(128), nullable=False)
 
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False, default=2)  # Set default to "editor"
+    role = db.relationship('Role', backref=db.backref('accounts', lazy='dynamic'))
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
         return s.dumps({'user_id': self.id}).decode('utf-8')
@@ -58,6 +70,11 @@ class Compounds(db.Model):
     source = db.Column(db.String(10))
     user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
     doicomp = db.relationship('DOI', secondary=doicomp, backref=db.backref('compounds', lazy='dynamic'))
+    
+    
+    # Add created_at field to track compound creation date
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    
     account = db.relationship("Accounts", backref="compounds")
 
     def __repr__(self):
@@ -74,7 +91,7 @@ class Compounds(db.Model):
             'exactmolwt': self.exact_molecular_weight,
             'pubchem': self.pubchem_id,
             'source': self.source,
-            'user_id': self.user_id
+            'user_id': self.user_id,
         }
 
 class Taxa(db.Model):
@@ -88,10 +105,11 @@ class Taxa(db.Model):
     classificationrank = db.Column(db.String(5000))
     matchtype = db.Column(db.String(50))
     user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
+    
+    # Add created_at field to track taxon creation date
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    
     account = db.relationship("Accounts", backref="taxons")
 
     def __repr__(self):
         return f'<Taxa: {self.verbatim}, {self.article_url}, {self.classificationpath}, {self.classificationrank}, {self.user_id}>'
-
-
-
