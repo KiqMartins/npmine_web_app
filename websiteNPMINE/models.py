@@ -25,6 +25,7 @@ class Accounts(db.Model, UserMixin):
 
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False, default=2)  # Set default to "editor"
     role = db.relationship('Role', backref=db.backref('accounts', lazy='dynamic'))
+    
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
         return s.dumps({'user_id': self.id}).decode('utf-8')
@@ -40,27 +41,21 @@ class Accounts(db.Model, UserMixin):
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}')"
-    
+
 class DOI(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     doi = db.Column(db.String(150), unique=True)
 
+    compounds = db.relationship('Compounds', secondary='doicomp', back_populates='dois')
+    taxa = db.relationship('Taxa', secondary='doitaxa', back_populates='dois')
+
     def __repr__(self):
         return f'<DOI: {self.doi}>'
-
-doicomp = db.Table('doicomp', 
-          db.Column('doi_id', db.Integer, db.ForeignKey('doi.id')),
-          db.Column('compounds_id', db.Integer, db.ForeignKey('compounds.id'))
-)
-
-doitaxa = db.Table('doitaxa', 
-          db.Column('doi_id', db.Integer, db.ForeignKey('doi.id')),
-          db.Column('taxa_id', db.Integer, db.ForeignKey('taxa.id'))
-)
 
 class Compounds(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     journal = db.Column(db.String(5000))
+    dois = db.relationship('DOI', secondary='doicomp', back_populates='compounds')
     smiles = db.Column(db.String(5000))
     article_url = db.Column(db.String(500))
     inchi_key = db.Column(db.String(5000))
@@ -69,8 +64,6 @@ class Compounds(db.Model):
     inchi = db.Column(db.String(5000))
     source = db.Column(db.String(10))
     user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
-    doicomp = db.relationship('DOI', secondary=doicomp, backref=db.backref('compounds', lazy='dynamic'))
-    
     
     # Add created_at field to track compound creation date
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -99,6 +92,7 @@ class Taxa(db.Model):
     article_url = db.Column(db.String(5000))
     verbatim = db.Column(db.String(5000))
     odds = db.Column(db.Float)
+    dois = db.relationship('DOI', secondary='doitaxa', back_populates='taxa')
     datasourceid = db.Column(db.String(5000))
     taxonid = db.Column(db.Integer)
     classificationpath = db.Column(db.String(5000))
@@ -113,3 +107,15 @@ class Taxa(db.Model):
 
     def __repr__(self):
         return f'<Taxa: {self.verbatim}, {self.article_url}, {self.classificationpath}, {self.classificationrank}, {self.user_id}>'
+
+doicomp = db.Table(
+    'doicomp',
+    db.Column('doi_id', db.Integer, db.ForeignKey('doi.id'), primary_key=True),
+    db.Column('compound_id', db.Integer, db.ForeignKey('compounds.id'), primary_key=True)
+)
+
+doitaxa = db.Table(
+    'doitaxa',
+    db.Column('doi_id', db.Integer, db.ForeignKey('doi.id'), primary_key=True),
+    db.Column('taxon_id', db.Integer, db.ForeignKey('taxa.id'), primary_key=True)
+)
