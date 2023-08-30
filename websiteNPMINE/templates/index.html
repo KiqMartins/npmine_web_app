@@ -24,17 +24,21 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Documentation</a>
           </li>
+          {% if current_user.is_authenticated and current_user.role.name == 'admin' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('users.admin_panel') }}">Control Panel</a>
+          </li>
+        {% endif %}
         </ul>
       </div>
       {% if logged_in %}
-        <!-- Add this new unordered list for the right-side link -->
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" id="login" href="/new_compound">
-              <button type="button" class="btn btn-outline-dark">Deposit</button>
-            </a>
-          </li>
-        </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" id="login" href="/new_compound">
+            <button type="button" class="btn btn-outline-dark">Deposit</button>
+          </a>
+        </li>
+      </ul>
       {% endif %}
     </div>
   </nav>    
@@ -47,16 +51,8 @@
         <button type="submit" class="btn btn-primary submit-btn">Submit</button>
       </div>
     </form>
-  </div>
-  {% if not logged_in %}
-  <div class="card border-dark mb-3">
-      <div class="card-body text-dark d-flex flex-column align-items-center">
-          <h5 class="card-title"><strong>Want to collaborate with the community by inserting NPMINE extracted compounds and taxa?</strong></h5>
-          <button type="button" class="btn btn-success">REQUEST ACCESS</button>
-      </div>
-  </div>
-{% endif %}
 </div>
+{% block tablecontent %}
 <div class="container">
   <hr>
   <div id="table"></div>
@@ -180,6 +176,7 @@ if (isAdmin) {
 
   grid.render(document.getElementById('table'));
 </script>
+{% endblock tablecontent %}
 <br>
 <section class="page-section" id="about">
     <div class="container">
@@ -203,20 +200,20 @@ if (isAdmin) {
 </section>
 <br>
 <footer class="footer text-center" style="background-color: #000000">
-    <div class="container" style="color: #ffffff">
-        <br>
-        <div class="row">
-          <div>
-            <p class="lead mb-0" style="text-align: justify; font-size: 15px">
-             <a href="https://github.com/computational-chemical-biology/npmine">NPMINE</a> and <a href="https://github.com/computational-chemical-biology/npmine_web_app">NPMINE Online Database</a> is a freely accessible and community-driven digital platform. Users are invited to report bugs, make feature requests, and communicate general issues via the <a href="https://github.com/computational-chemical-biology/npmine_web_app/issues">issues tracker on GitHub.</a> The development and maintenance of NPMINE and NPMINE Online Database are overseen by the <a href="http://ccbl.fcfrp.usp.br/ccbl/index.html">Computational Chemical Biology group</a>, based at the <a href="https://fcfrp.usp.br/en/">School of Pharmaceutical Sciences</a> in Ribeirão Preto - SP, Brazil.
-            </p>
-          </div>
-            <div>
-                <a class="btn btn-social mx-1" href="https://github.com/computational-chemical-biology/npmine"><img src="static/assets/img/github.webp" width="30"><!--<i class="fas fa-download"></i>--></a>
-            </div> 
+  <div class="container" style="color: #ffffff">
+      <br>
+      <div class="row">
+        <div>
+          <p class="lead mb-0" style="text-align: justify; font-size: 15px">
+           <a href="https://github.com/computational-chemical-biology/npmine">NPMINE</a> and <a href="https://github.com/computational-chemical-biology/npmine_web_app">NPMINE Online Database</a> is a freely accessible and community-driven digital platform. Users are invited to report bugs, make feature requests, and communicate general issues via the <a href="https://github.com/computational-chemical-biology/npmine_web_app/issues">issues tracker on GitHub.</a> The development and maintenance of NPMINE and NPMINE Online Database are overseen by the <a href="http://ccbl.fcfrp.usp.br/ccbl/index.html">Computational Chemical Biology group</a>, based at the <a href="https://fcfrp.usp.br/en/">School of Pharmaceutical Sciences</a> in Ribeirão Preto - SP, Brazil.
+          </p>
         </div>
-        <br>
-    </div>
+          <div>
+              <a class="btn btn-social mx-1" href="https://github.com/computational-chemical-biology/npmine"><img src="static/assets/img/github.webp" width="30"><!--<i class="fas fa-download"></i>--></a>
+          </div> 
+      </div>
+      <br>
+  </div>
 {% endblock bannercontent %}
 
 

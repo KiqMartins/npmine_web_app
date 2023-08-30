@@ -1,8 +1,8 @@
 """initial commit
 
-Revision ID: 08f895f13fe7
+Revision ID: 47371fe6f780
 Revises: 
-Create Date: 2023-08-09 14:58:42.105173
+Create Date: 2023-08-23 14:43:01.994149
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '08f895f13fe7'
+revision = '47371fe6f780'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -73,16 +73,18 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('doicomp',
-    sa.Column('doi_id', sa.Integer(), nullable=True),
-    sa.Column('compounds_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['compounds_id'], ['compounds.id'], ),
-    sa.ForeignKeyConstraint(['doi_id'], ['doi.id'], )
+    sa.Column('doi_id', sa.Integer(), nullable=False),
+    sa.Column('compound_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['compound_id'], ['compounds.id'], ),
+    sa.ForeignKeyConstraint(['doi_id'], ['doi.id'], ),
+    sa.PrimaryKeyConstraint('doi_id', 'compound_id')
     )
     op.create_table('doitaxa',
-    sa.Column('doi_id', sa.Integer(), nullable=True),
-    sa.Column('taxa_id', sa.Integer(), nullable=True),
+    sa.Column('doi_id', sa.Integer(), nullable=False),
+    sa.Column('taxon_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['doi_id'], ['doi.id'], ),
-    sa.ForeignKeyConstraint(['taxa_id'], ['taxa.id'], )
+    sa.ForeignKeyConstraint(['taxon_id'], ['taxa.id'], ),
+    sa.PrimaryKeyConstraint('doi_id', 'taxon_id')
     )
     # ### end Alembic commands ###
 

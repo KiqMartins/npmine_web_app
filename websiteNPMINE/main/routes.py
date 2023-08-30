@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify, abort, redirect, url_for,flash
 from flask_login import login_required, current_user, login_user, logout_user
-from websiteNPMINE.models import Compounds, DOI, Accounts
+from websiteNPMINE.models import Compounds, DOI, Accounts, Taxa
 from websiteNPMINE import db
 import requests
 
@@ -88,8 +88,8 @@ def compound(compound_id):
     inchi_key = compound.inchi_key
     exact_mol_weight = compound.exact_molecular_weight
 
-    # Get the articles associated with the compound using the `doicomp` relationship
-    articles = [doi.doi.replace('<DOI: ', '').replace('>', '') for doi in compound.doicomp]
+    # Get the articles associated with the compound using the `dois` relationship
+    articles = [doi.doi.replace('<DOI: ', '').replace('>', '') for doi in compound.dois]
 
     # Pass the variables to the template
     return render_template(

@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>Search Results for "{{ query }}"</h1>
+
+    <h2>Compounds</h2>
+    <ul>
+        {% for compound in compounds %}
+            <li>{{ compound.journal }} - {{ compound.inchi }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>DOIs</h2>
+    <ul>
+        {% for doi in dois %}
+            <li>{{ doi.doi }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Taxa</h2>
+    <ul>
+        {% for taxon in taxa %}
+            <li>{{ taxon.verbatim }} - {{ taxon.classificationpath }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% for result in results %}
+  <p>{{ result }}</p>  <!-- Add this to check the content of each result -->
+{% endfor %}
