@@ -1,30 +1,136 @@
-{% extends 'layout.html' %}
+{% extends "layout.html" %}
 
-{% block content %}
-    <h1>Search Results for "{{ query }}"</h1>
+{% block bannercontent %}
+<!-- Banner -->
+<div class="container">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            {% if logged_in %}
+            <p id="user_greeting">Hello, {{ current_user.username }}!</p>
+            {% endif %}
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Downloads</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Documentation</a>
+          </li>
+          {% if current_user.is_authenticated and current_user.role.name == 'admin' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('users.admin_panel') }}">Control Panel</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+      {% if logged_in %}
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" id="login" href="/new_compound">
+            <button type="button" class="btn btn-outline-dark">Deposit</button>
+          </a>
+        </li>
+      </ul>
+      {% endif %}
+    </div>
+  </nav>    
+  <div class="jumbotron p-3 py-3 pt-md-5 pb-md-4 mx-auto text-center text-white rounded bg-dark npmine-banner">
+    <h1 class="search display-4 font-italic">Search</h1>
+    <p class="search" style="font-size: 25px;">Explore chemical and taxonomic entities extracted by NPMINE</p>
+    <form id="search-form" class="form-inline justify-content-center mt-4 search-form" action="/search" method="GET">
+      <div class="input-group">
+        <input type="text" class="form-control search-input" id="search-input" name="q" placeholder="Search">
+        <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+      </div>
+    </form>
+  </div>
+  <div class="container">
+    <h1>Search Results</h1>
 
-    <h2>Compounds</h2>
+    <h3>Compounds</h3>
     <ul>
-        {% for compound in compounds %}
-            <li>{{ compound.journal }} - {{ compound.inchi }}</li>
-        {% endfor %}
+      {% for compound in compounds %}
+        <li>{{ compound.name }} - {{ compound.inchi_key }}</li>
+      {% endfor %}
     </ul>
-
-    <h2>DOIs</h2>
+  
+    <h3>Taxa</h3>
     <ul>
-        {% for doi in dois %}
-            <li>{{ doi.doi }}</li>
-        {% endfor %}
+      {% for taxon in taxa %}
+        <li>{{ taxon.name }} - {{ taxon.verbatim }}</li>
+      {% endfor %}
     </ul>
-
-    <h2>Taxa</h2>
+  
+    <h3>Related Compounds</h3>
     <ul>
-        {% for taxon in taxa %}
-            <li>{{ taxon.verbatim }} - {{ taxon.classificationpath }}</li>
+      {% for doi_id, related_compound_list in related_compounds.items() %}
+        {% for related_compound in related_compound_list %}
+          <li>{{ related_compound.name }} - {{ related_compound.inchi_key }}</li>
         {% endfor %}
+      {% endfor %}
     </ul>
-{% endblock %}
+  
+    <h3>Related Taxa</h3>
+    <ul>
+      {% for doi_id, related_taxon_list in related_taxa.items() %}
+        {% for related_taxon in related_taxon_list %}
+          <li>{{ related_taxon.name }} - {{ related_taxon.verbatim }}</li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+</div>
 
-{% for result in results %}
-  <p>{{ result }}</p>  <!-- Add this to check the content of each result -->
-{% endfor %}
+  <br>
+  <section class="page-section" id="about">
+    <div class="container">
+      <h2 class="page-section-heading text-center text-uppercase mb-0" style="color: #000000"><b>About NPMINE</b></h2>
+      <div class="divider-custom">
+        <div class="divider-custom-line"></div>
+        <div class="divider-custom-icon"><i class="fas fa-atom"></i></div>
+        <div class="divider-custom-line"></div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4 mb-5">
+          <img class="img-fluid" src="/static/assets/img/npmine_report_terminal.png" alt="..." />
+        </div>
+        <div class="col-md-6 col-lg-8 mb-5">
+          <br>
+          <br>
+          <p style="font-family: 'Quicksand', sans-serif; font-size: 20px; text-align: center;">NPMINE (Natural Products MINing) is an open-source modular tool that utilizes text mining techniques to extract chemical entities, which may include natural products (NPs), and taxonomic mentions from scientific literature. This online database serves the purpose of storing information that has been extracted by NPMINE, thereby enabling searches and analyses.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <br>
+  <footer class="footer text-center" style="background-color: #000000">
+    <div class="container" style="color: #ffffff">
+      <br>
+      <div class="row">
+        <div>
+          <p class="lead mb-0" style="text-align: justify; font-size: 15px">
+            <a href="https://github.com/computational-chemical-biology/npmine">NPMINE</a> and <a href="https://github.com/computational-chemical-biology/npmine_web_app">NPMINE Online Database</a> is a freely accessible and community-driven digital platform. Users are invited to report bugs, make feature requests, and communicate general issues via the <a href="https://github.com/computational-chemical-biology/npmine_web_app/issues">issues tracker on GitHub.</a> The development and maintenance of NPMINE and NPMINE Online Database are overseen by the <a href="http://ccbl.fcfrp.usp.br/ccbl/index.html">Computational Chemical Biology group</a>, based at the <a href="https://fcfrp.usp.br/en/">School of Pharmaceutical Sciences</a> in Ribeirão Preto - SP, Brazil.
+          </p>
+        </div>
+        <div>
+          <a class="btn btn-social mx-1" href="https://github.com/computational-chemical-biology/npmine"><img src="static/assets/img/github.webp" width="30"></a>
+        </div> 
+      </div>
+      <br>
+    </div>
+  </footer>
+{% endblock bannercontent %}
+
+
+
+
+
+
+

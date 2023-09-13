@@ -1,8 +1,12 @@
 from flask import Blueprint, render_template, request, jsonify, abort, redirect, url_for,flash
 from flask_login import login_required, current_user, login_user, logout_user
-from websiteNPMINE.models import Compounds, DOI, Accounts, Taxa
+from websiteNPMINE.models import Compounds, DOI, Accounts, Taxa, doicomp, doitaxa
 from websiteNPMINE import db
 import requests
+from sqlalchemy import or_
+from sqlalchemy.orm.attributes import InstrumentedAttribute
+from sqlalchemy.orm import aliased
+import collections
 
 main = Blueprint('main', __name__)
 
@@ -123,6 +127,58 @@ def delete_compound(compound_id):
         flash("An error occurred while deleting the compound.", "error")
 
     return redirect(url_for('main.home'))
+
+
+@main.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('q', '')
+    print(f"Query: {query}")
+
+    # Query Compounds, DOI, and Taxa
+    compounds = Compounds.query.filter(
+        or_(
+            Compounds.journal.ilike(f'%{query}%'),
+            Compounds.inchi_key.ilike(f'%{query}%'),
+            Compounds.article_url.ilike(f'%{query}%')  # Add article_url search criteria
+        )
+    ).all()
+
+    taxa = Taxa.query.filter(
+        or_(
+            Taxa.verbatim.ilike(f'%{query}%'),
+            Taxa.article_url.ilike(f'%{query}%')  # Add article_url search criteria
+        )
+    ).all()
+
+    # Initialize defaultdicts to store related compounds and taxa
+    related_compounds = collections.defaultdict(list)
+    related_taxa = collections.defaultdict(list)
+
+    # Query DOI
+    dois = DOI.query.filter(DOI.doi.ilike(f'%{query}%')).all()
+
+    # Query related compounds and taxa based on DOI
+    for doi in dois:
+        # Create aliases for the association tables
+        doicomp_alias = aliased(doicomp)
+        doitaxa_alias = aliased(doitaxa)
+        
+        # Query related compounds
+        compound_query = Compounds.query.join(doicomp_alias).filter(doicomp_alias.c.doi_id == doi.id)
+        related_compounds[doi.id].extend(compound_query.all())
+
+        # Query related taxa
+        taxa_query = Taxa.query.join(doitaxa_alias).filter(doitaxa_alias.c.doi_id == doi.id)
+        related_taxa[doi.id].extend(taxa_query.all())
+
+    return render_template(
+        'search_results.html',
+        compounds=compounds,
+        taxa=taxa,
+        related_compounds=related_compounds,
+        related_taxa=related_taxa,
+        query=query
+    )
 
 
 
