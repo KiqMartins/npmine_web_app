@@ -15,15 +15,6 @@ main = Blueprint('main', __name__)
 def home():
     logged_in = current_user.is_authenticated  # Check if the user is logged in
     return render_template("index.html", logged_in=logged_in)
-
-def fetch_structure_image(inchikey):
-    cactus_api_url = f"https://cactus.nci.nih.gov/chemical/structure/{inchikey}/image"
-    response = requests.get(cactus_api_url)
-    
-    if response.status_code == 200:
-        return response.url
-    else:
-        return None
     
 @main.route('/api/data')
 def data():
@@ -65,6 +56,8 @@ def data():
     for compound in compounds:
         compound_data = compound.to_dict()
         compound_data['id'] = compound.id
+        compound_data['compound_name'] = compound.compound_name
+        compound_data['compound_image'] = url_for('static', filename=f'{compound.compound_image}') if compound.compound_image else ''
         inchi = compound.inchi
         inchikey = compound.inchi_key
 
@@ -79,32 +72,18 @@ def data():
 
     return jsonify({'data': data, 'total': total})
 
+
 @main.route('/compound/<int:compound_id>')
 def compound(compound_id):
     compound = Compounds.query.get(compound_id)
     if not compound:
         abort(404)
 
-    # Fetch the required information from the compound object
-    compound_id = compound.id
-    inchi = compound.inchi
-    pubchem_id = compound.pubchem_id
-    inchi_key = compound.inchi_key
-    exact_mol_weight = compound.exact_molecular_weight
-
     # Get the articles associated with the compound using the `dois` relationship
     articles = [doi.doi.replace('<DOI: ', '').replace('>', '') for doi in compound.dois]
 
-    # Pass the variables to the template
-    return render_template(
-        'compound.html',
-        compound_id=compound_id,
-        inchi=inchi,
-        inchi_key=inchi_key,
-        pubchem_id=pubchem_id,
-        exact_mol_weight=exact_mol_weight,
-        articles=articles
-    )
+    # Pass all the required information from the compound object and the articles to the template
+    return render_template('compound.html', compound=compound, articles=articles)
 
 @main.route('/compound/<int:compound_id>/delete', methods=['POST'])
 @login_required
