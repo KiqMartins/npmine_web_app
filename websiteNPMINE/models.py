@@ -55,6 +55,8 @@ class DOI(db.Model):
 class Compounds(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     journal = db.Column(db.String(5000))
+    compound_name = db.Column(db.String(5000))
+    compound_image = db.Column(db.String(5000))
     dois = db.relationship('DOI', secondary='doicomp', back_populates='compounds')
     smiles = db.Column(db.String(5000))
     article_url = db.Column(db.String(500))
@@ -77,6 +79,8 @@ class Compounds(db.Model):
         return {
             'id': self.id,
             'journal': self.journal,
+            'compound_name': self.compound_name,
+            'compound_image': self.compound_image,
             'smiles': self.smiles,
             'article_id': self.article_url,
             'inchi': self.inchi,
@@ -86,6 +90,7 @@ class Compounds(db.Model):
             'source': self.source,
             'user_id': self.user_id,
         }
+
 
 class Taxa(db.Model):
     id = db.Column(db.Integer, primary_key=True)

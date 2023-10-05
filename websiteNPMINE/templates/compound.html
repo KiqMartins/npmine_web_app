@@ -15,60 +15,49 @@
   </div>
 </div>
 
-<script>
-  $(document).ready(function() {
-    $('#search-form').submit(function(e) {
-      e.preventDefault();
-      var searchQuery = $('#search-input').val();
-      window.location.href = '/api/data?search=' + encodeURIComponent(searchQuery);
-    });
-  });
-</script>
 <div class="container w-50 p-3">
-  <table class="table table-bordered">
-    <tbody>
-        <tr>
-            <th scope="row">Compound Name</th>
-            <td>{{ compound_name }}</td>
-        </tr>
-        <tr>
-            <th scope="row">ID</th>
-            <td>{{ compound_id }}</td>
-        </tr>
-        <tr>
-            <th scope="row">Compound Image</th>
-            <td></td>
-        </tr>
-        <tr>
-            <th scope="row">Exact Molecular Weight</th>
-            <td>{{ exact_mol_weight }}</td>
-        </tr>
-        <tr>
-            <th scope="row">InChI</th>
-            <td>{{ inchi }}</td>
-        </tr>
-        <tr>
-            <th scope="row">InChI Key</th>
-            <td>{{ inchi_key }}</td>
-        </tr>
-        <tr>
-            <th scope="row">PubChem ID</th>
-            <td>{{ pubchem_id }}</td>
-        </tr>
-        <tr>
-            <th scope="row">Articles</th>
-            <td>
-                <ul>
-                    {% for article in articles %}
-                    <li>
-                        <a href="{{ article }}" target="_blank">{{ article }}</a>
-                    </li>
-                    {% endfor %}
-              </ul>
-            </td>
-        </tr>
-    </tbody>
-</table>
+    <table class="table table-bordered">
+      <tbody>
+          <tr>
+              <th scope="row">Compound Name</th>
+              <td>{{ compound.compound_name }}</td>
+          </tr>
+          <tr>
+              <th scope="row">Compound Image</th>
+              <td>
+                  {% if compound.compound_image %}
+                  <img src="{{ url_for('static', filename=compound.compound_image) }}" alt="Compound Image">
+                  {% else %}
+                  No image available
+                  {% endif %}
+              </td>
+          </tr>
+          <tr>
+              <th scope="row">SMILES</th>
+              <td>{{ compound.smiles }}</td>
+          </tr>
+          <tr>
+              <th scope="row">User</th>
+              <td>{{ compound.account.username }}</td>
+          </tr>
+          <tr>
+              <th scope="row">Created At</th>
+              <td>{{ compound.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+          </tr>
+          <tr>
+              <th scope="row">Articles</th>
+              <td>
+                  <ul>
+                      {% for article in articles %}
+                      <li>
+                          <a href="{{ article }}" target="_blank">{{ article }}</a>
+                      </li>
+                      {% endfor %}
+                  </ul>
+              </td>
+          </tr>
+      </tbody>
+  </table>
 
 <h2>Additional Information</h2>
 <table class="table table-bordered">

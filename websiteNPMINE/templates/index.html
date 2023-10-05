@@ -93,26 +93,30 @@
       id: 'id',
       name: 'ID',
       sort: false,
-      style: {
-        maxWidth: '80px', // Set maximum width for the ID column
-        whiteSpace: 'nowrap', // Prevent line wrapping
-      },
       formatter: (cell, row) => {
         return gridjs.html('<a href="/compound/' + cell + '">' + cell + '</a>');
       }
     },
     {
-        id: 'image_url',
-        name: 'Structure Image',
-        sort: false,
-        formatter: (cell, row) => {
-            if (cell) {
-                return gridjs.html(`<img src="${cell}" alt="Structure" style="max-width: 100px; max-height: 100px;">`);
-            } else {
-                return ''; // Empty cell if image URL is not available
-            }
-        }
-    },
+    id: 'compound_name',
+    name: 'Compound Name',
+    sort: false,
+    formatter: (cell, row) => {
+        return gridjs.html(cell);
+    }
+  },
+  {
+  id: 'compound_image',
+  name: 'Compound Image',
+  sort: false,
+  formatter: (cell, row) => {
+    if (cell) {
+      return gridjs.html(`<img src="${cell}" alt="Structure" style="max-width: 100px; max-height: 100px;">`);
+    } else {
+      return ''; // Empty cell if image URL is not available
+    }
+  }
+},
     { id: 'inchikey', name: 'InChI Key', sort: false, style: { whiteSpace: 'nowrap' } },
     {
       id: 'pubchem',
