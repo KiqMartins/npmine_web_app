@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block bannercontent %}
+<!-- Banner -->
+<div class="container">
+  <div class="jumbotron p-3 py-3 pt-md-5 pb-md-4 mx-auto text-center text-white rounded bg-dark npmine-banner">
+    <h1 class="search display-4 font-italic">Search</h1>
+    <p class="search" style="font-size: 25px;">Explore chemical and taxonomic entities extracted by NPMINE</p>
+    <form id="search-form" class="form-inline justify-content-center mt-4 search-form">
+      <div class="input-group">
+        <input type="text" class="form-control search-input" id="search-input" name="search" placeholder="Search">
+        <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="container w-50 p-3">
+    <table class="table table-bordered">
+      <tbody>
+          <tr>
+              <th scope="row">Journal Name</th>
+              <td>{{ journal_name }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Created At</th>
+            <td>{{ created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+          </tr>
+          <tr>
+              <th scope="row">URL Link</th>
+              <td><a href="{{ article_url }}" target="_blank">{{ article_url }}</a></td>
+          </tr>
+          <tr>
+            <th scope="row">Compounds extracted</th>
+            <td>{{ related_compound_names }}</td>
+          </tr>
+          <tr>
+              <th scope="row">Taxa extracted</th>
+              <td></td>
+          </tr>
+      </tbody>
+  </table>
+</div>
+{% endblock %}

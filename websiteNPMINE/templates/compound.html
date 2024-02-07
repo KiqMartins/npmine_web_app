@@ -48,48 +48,42 @@
               <th scope="row">Articles</th>
               <td>
                   <ul>
-                      {% for article in articles %}
-                      <li>
-                          <a href="{{ article }}" target="_blank">{{ article }}</a>
-                      </li>
-                      {% endfor %}
+                    {% for article_id, article_url in articles %}
+                <li>
+                    <a href="{{ url_for('main.article', article_id=article_id) }}" target="_blank">{{ article_url }}</a>
+                </li>
+                {% endfor %}
                   </ul>
               </td>
           </tr>
+          <tr>
+            <th scope="row">Taxa</th>
+            <td>
+            </td>
+        </tr>
       </tbody>
   </table>
 
-<h2>Additional Information</h2>
+<h2>Additional Information - NP Classifier</h2>
 <table class="table table-bordered">
     <tbody>
         <tr>
-            <th scope="row">Molecular Formula</th>
-            <td></td>
-        </tr>
-        <tr>
-            <th scope="row">XLogP</th>
-            <td></td>
-        </tr>
-        <tr>
-            <th scope="row">Exact Mass</th>
-            <td></td>
-        </tr>
-        <tr>
-            <th scope="row">Kingdom</th>
-            <td></td>
-        </tr>
-        <tr>
-            <th scope="row">Superclass</th>
-            <td></td>
+            <th scope="row">Pathway</th>
+            <td>{{ resposta_api.pathway_results }}</td>
         </tr>
         <tr>
             <th scope="row">Class</th>
-            <td></td>
+            <td>{{ resposta_api.class_results }}</td>
         </tr>
         <tr>
-            <th scope="row">Subclass</th>
-            <td></td>
+            <th scope="row">Superclass</th>
+            <td>{{ resposta_api.superclass_results }}</td>
         </tr>
+        <tr>
+            <th scope="row">Is Glycoside</th>
+            <td>{{ resposta_api.isglycoside }}</td>
+        </tr>
+        <tr>
     </tbody>
 </table>
 </div>
