@@ -79,11 +79,46 @@ def compound(compound_id):
     if not compound:
         abort(404)
 
-    # Get the articles associated with the compound using the `dois` relationship
-    articles = [doi.doi.replace('<DOI: ', '').replace('>', '') for doi in compound.dois]
+    # Get the article URLs and their corresponding IDs associated with the compound
+    articles = [(doi.id, doi.doi) for doi in compound.dois]
+
+    # Use NPclassifier API
+    api_url = f'https://npclassifier.gnps2.org/classify?smiles={compound.smiles}'
+    resposta_api = requests.get(api_url).json()
 
     # Pass all the required information from the compound object and the articles to the template
-    return render_template('compound.html', compound=compound, articles=articles)
+    return render_template('compound.html', compound=compound, articles=articles, resposta_api=resposta_api)
+
+
+@main.route('/article/<int:article_id>')
+def article(article_id):
+    # Fetch article from the DOI table based on the article_id
+    doi_record = DOI.query.get(article_id)
+    if not doi_record:
+        abort(404)
+    
+     # Retrieve the compounds associated with the article
+    compounds = doi_record.compounds
+
+    if compounds:
+        first_compound = compounds[0]
+        journal_name = first_compound.journal
+        article_url = first_compound.article_url
+        created_at = first_compound.created_at
+    else:
+        journal_name = None
+        article_url = None
+        created_at = None
+
+     # Retrieve related compound names
+    related_compound_names = set()
+    for doi_compound in compounds:
+        related_compounds = Compounds.query.join(doicomp).filter(doicomp.columns.doi_id == article_id).all()
+        for compound in related_compounds:
+            related_compound_names.add(compound.compound_name)
+
+    # Pass the article to the template
+    return render_template('article.html', doi_record=doi_record, journal_name=journal_name, article_url=article_url, created_at=created_at, related_compound_names=related_compound_names)
 
 @main.route('/compound/<int:compound_id>/delete', methods=['POST'])
 @login_required
