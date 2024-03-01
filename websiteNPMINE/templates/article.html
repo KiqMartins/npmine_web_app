@@ -3,42 +3,83 @@
 {% block bannercontent %}
 <!-- Banner -->
 <div class="container">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            {% if logged_in %}
+            <p id="user_greeting">Hello, {{ current_user.username }}!</p>
+            {% endif %}
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Downloads</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Documentation</a>
+          </li>
+          {% if current_user.is_authenticated and current_user.role.name == 'admin' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('users.admin_panel') }}">Control Panel</a>
+          </li>
+        {% endif %}
+        </ul>
+      </div>
+      {% if logged_in %}
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" id="login" href="/new_compound">
+            <button type="button" class="btn btn-outline-dark">Deposit</button>
+          </a>
+        </li>
+      </ul>
+      {% endif %}
+    </div>
+  </nav>    
   <div class="jumbotron p-3 py-3 pt-md-5 pb-md-4 mx-auto text-center text-white rounded bg-dark npmine-banner">
     <h1 class="search display-4 font-italic">Search</h1>
     <p class="search" style="font-size: 25px;">Explore chemical and taxonomic entities extracted by NPMINE</p>
-    <form id="search-form" class="form-inline justify-content-center mt-4 search-form">
+    <form id="search-form" class="form-inline justify-content-center mt-4 search-form" action="/search" method="GET">
       <div class="input-group">
-        <input type="text" class="form-control search-input" id="search-input" name="search" placeholder="Search">
-        <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+          <input type="text" class="form-control search-input" id="search-input" name="q" placeholder="Search">
+          <button type="submit" class="btn btn-primary submit-btn">Submit</button>
       </div>
-    </form>
-  </div>
+  </form>
 </div>
-
 <div class="container w-50 p-3">
-    <table class="table table-bordered">
-      <tbody>
-          <tr>
-              <th scope="row">Journal Name</th>
-              <td>{{ journal_name }}</td>
-          </tr>
-          <tr>
-            <th scope="row">Created At</th>
-            <td>{{ created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-          </tr>
-          <tr>
-              <th scope="row">URL Link</th>
-              <td><a href="{{ article_url }}" target="_blank">{{ article_url }}</a></td>
-          </tr>
-          <tr>
-            <th scope="row">Compounds extracted</th>
-            <td>{{ related_compound_names }}</td>
-          </tr>
-          <tr>
-              <th scope="row">Taxa extracted</th>
-              <td></td>
-          </tr>
-      </tbody>
-  </table>
+  <table class="table table-bordered">
+    <tbody>
+        <tr>
+            <th scope="row">Journal Name</th>
+            <td>{{ journal_name }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Created At</th>
+          <td>{{ created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+        </tr>
+        <tr>
+            <th scope="row">URL Link</th>
+            <td><a href="{{ article_url }}" target="_blank">{{ article_url }}</a></td>
+        </tr>
+        <tr>
+          <th scope="row">Compounds extracted</th>
+          <td>{% if related_compound_names %}
+            {{ ', '.join(related_compound_names) }}
+          {% else %}
+            No compounds extracted
+          {% endif %}</td>
+        </tr>
+        <tr>
+            <th scope="row">Taxa extracted</th>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
 </div>
 {% endblock %}

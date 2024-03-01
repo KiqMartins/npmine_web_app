@@ -76,6 +76,7 @@ def data():
 @main.route('/compound/<int:compound_id>')
 def compound(compound_id):
     compound = Compounds.query.get(compound_id)
+    logged_in = current_user.is_authenticated  # Check if the user is logged in
     if not compound:
         abort(404)
 
@@ -87,11 +88,12 @@ def compound(compound_id):
     resposta_api = requests.get(api_url).json()
 
     # Pass all the required information from the compound object and the articles to the template
-    return render_template('compound.html', compound=compound, articles=articles, resposta_api=resposta_api)
+    return render_template('compound.html', logged_in=logged_in, compound=compound, articles=articles, resposta_api=resposta_api)
 
 
 @main.route('/article/<int:article_id>')
 def article(article_id):
+    logged_in = current_user.is_authenticated  # Check if the user is logged in
     # Fetch article from the DOI table based on the article_id
     doi_record = DOI.query.get(article_id)
     if not doi_record:
@@ -110,7 +112,7 @@ def article(article_id):
         article_url = None
         created_at = None
 
-     # Retrieve related compound names
+    # Retrieve related compound names
     related_compound_names = set()
     for doi_compound in compounds:
         related_compounds = Compounds.query.join(doicomp).filter(doicomp.columns.doi_id == article_id).all()
@@ -118,7 +120,7 @@ def article(article_id):
             related_compound_names.add(compound.compound_name)
 
     # Pass the article to the template
-    return render_template('article.html', doi_record=doi_record, journal_name=journal_name, article_url=article_url, created_at=created_at, related_compound_names=related_compound_names)
+    return render_template('article.html', doi_record=doi_record, journal_name=journal_name, article_url=article_url, created_at=created_at, related_compound_names=related_compound_names, logged_in=logged_in)
 
 @main.route('/compound/<int:compound_id>/delete', methods=['POST'])
 @login_required
