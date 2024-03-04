@@ -121,6 +121,13 @@ def article(article_id):
     
     cleaned_related_compound_names = [name for name in related_compound_names if name is not None]
 
+    # Retrieve compound IDs for the related compound names
+    compound_name_to_id_map = {}  # Create an empty dictionary
+    for compound_name in cleaned_related_compound_names:
+        compound = Compounds.query.filter_by(compound_name=compound_name).first()
+        if compound:
+            compound_name_to_id_map[compound_name] = compound.id
+
     # Retrieve matches in the taxa table based on the article_url
     matching_taxa = Taxa.query.filter_by(article_url=article_url).all()
 
@@ -128,7 +135,7 @@ def article(article_id):
     verbatim_values = [taxon.verbatim for taxon in matching_taxa]
 
     # Pass the article to the template
-    return render_template('article.html', doi_record=doi_record, journal_name=journal_name, article_url=article_url, created_at=created_at, related_compound_names=cleaned_related_compound_names, logged_in=logged_in, verbatim_values=verbatim_values)
+    return render_template('article.html', doi_record=doi_record, journal_name=journal_name, article_url=article_url, created_at=created_at, related_compound_names=cleaned_related_compound_names, logged_in=logged_in, verbatim_values=verbatim_values, compound_name_to_id_map=compound_name_to_id_map)
 
 @main.route('/compound/<int:compound_id>/delete', methods=['POST'])
 @login_required
