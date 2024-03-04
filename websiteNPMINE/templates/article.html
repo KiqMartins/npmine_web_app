@@ -77,7 +77,11 @@
         </tr>
         <tr>
             <th scope="row">Taxa extracted</th>
-            <td></td>
+            <td><ul>
+              {% for verbatim_value in verbatim_values %}
+                <li>{{ verbatim_value }}</li>
+              {% endfor %}
+            </ul></td>
         </tr>
     </tbody>
 </table>
