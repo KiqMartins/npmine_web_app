@@ -118,6 +118,8 @@ def article(article_id):
         related_compounds = Compounds.query.join(doicomp).filter(doicomp.columns.doi_id == article_id).all()
         for compound in related_compounds:
             related_compound_names.add(compound.compound_name)
+    
+    cleaned_related_compound_names = [name for name in related_compound_names if name is not None]
 
     # Retrieve matches in the taxa table based on the article_url
     matching_taxa = Taxa.query.filter_by(article_url=article_url).all()
@@ -126,7 +128,7 @@ def article(article_id):
     verbatim_values = [taxon.verbatim for taxon in matching_taxa]
 
     # Pass the article to the template
-    return render_template('article.html', doi_record=doi_record, journal_name=journal_name, article_url=article_url, created_at=created_at, related_compound_names=related_compound_names, logged_in=logged_in, verbatim_values=verbatim_values)
+    return render_template('article.html', doi_record=doi_record, journal_name=journal_name, article_url=article_url, created_at=created_at, related_compound_names=cleaned_related_compound_names, logged_in=logged_in, verbatim_values=verbatim_values)
 
 @main.route('/compound/<int:compound_id>/delete', methods=['POST'])
 @login_required

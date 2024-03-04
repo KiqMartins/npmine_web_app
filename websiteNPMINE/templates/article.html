@@ -69,20 +69,31 @@
         </tr>
         <tr>
           <th scope="row">Compounds extracted</th>
-          <td>{% if related_compound_names %}
-            {{ ', '.join(related_compound_names) }}
-          {% else %}
-            No compounds extracted
-          {% endif %}</td>
-        </tr>
-        <tr>
+          <td>
+            {% if related_compound_names %}
+              <ul>
+                {% for compound_name in related_compound_names %}
+                  <li>{{ compound_name }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              No compounds extracted
+            {% endif %}
+          </td>
+          <tr>
             <th scope="row">Taxa extracted</th>
-            <td><ul>
-              {% for verbatim_value in verbatim_values %}
-                <li>{{ verbatim_value }}</li>
-              {% endfor %}
-            </ul></td>
-        </tr>
+            <td>
+              {% if verbatim_values %}
+                <ul>
+                  {% for verbatim_value in verbatim_values %}
+                    <li>{{ verbatim_value }}</li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                -
+              {% endif %}
+            </td>
+          </tr>
     </tbody>
 </table>
 </div>

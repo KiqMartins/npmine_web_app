@@ -102,7 +102,11 @@
     name: 'Compound Name',
     sort: false,
     formatter: (cell, row) => {
-        return gridjs.html(cell);
+        if (cell) {
+            return gridjs.html(cell);
+        } else {
+            return '-'; // Display dash if compound_name is empty
+        }
     }
   },
   {
