@@ -69,17 +69,22 @@
         </tr>
         <tr>
           <th scope="row">Compounds extracted</th>
-          <td>
-            {% if related_compound_names %}
-              <ul>
-                {% for compound_name in related_compound_names %}
+        <td>
+          {% if related_compound_names %}
+            <ul>
+              {% for compound_name in related_compound_names %}
+                {% set compound_id = compound_name_to_id_map.get(compound_name) %}
+                {% if compound_id %}
+                  <li><a href="{{ url_for('main.compound', compound_id=compound_id) }}">{{ compound_name }}</a></li>
+                {% else %}
                   <li>{{ compound_name }}</li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              No compounds extracted
-            {% endif %}
-          </td>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% else %}
+            No compounds extracted
+          {% endif %}
+        </td>
           <tr>
             <th scope="row">Taxa extracted</th>
             <td>
