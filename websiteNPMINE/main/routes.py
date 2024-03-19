@@ -84,11 +84,11 @@ def compound(compound_id):
     articles = [(doi.id, doi.doi) for doi in compound.dois]
 
     # Use NPclassifier API
-    api_url = f'https://npclassifier.gnps2.org/classify?smiles={compound.smiles}'
-    resposta_api = requests.get(api_url).json()
+    #api_url = f'https://npclassifier.gnps2.org/classify?smiles={compound.smiles}'
+    #resposta_api = requests.get(api_url).json()
 
     # Pass all the required information from the compound object and the articles to the template
-    return render_template('compound.html', logged_in=logged_in, compound=compound, articles=articles, resposta_api=resposta_api)
+    return render_template('compound.html', logged_in=logged_in, compound=compound, articles=articles)
 
 
 @main.route('/article/<int:article_id>')
@@ -136,6 +136,62 @@ def article(article_id):
 
     # Pass the article to the template
     return render_template('article.html', doi_record=doi_record, journal_name=journal_name, article_url=article_url, created_at=created_at, related_compound_names=cleaned_related_compound_names, logged_in=logged_in, verbatim_values=verbatim_values, compound_name_to_id_map=compound_name_to_id_map)
+
+@main.route('/profile/<int:profile_id>')
+@login_required
+def profile(profile_id):
+    logged_in = current_user.is_authenticated
+    # Fetch the user's profile information based on the profile_id
+    user = Accounts.query.get(profile_id)
+    if not user:
+        abort(404)  # User not found
+
+    # Fetch public compounds inserted by the user
+    public_compounds = Compounds.query.filter_by(user_id=profile_id, status='public').all()
+
+    # Fetch private compounds if the logged-in user is the same as the profile owner or is an admin
+    private_compounds = []
+    if logged_in and (current_user.id == profile_id or current_user.role.name == 'admin'):
+        private_compounds = Compounds.query.filter_by(user_id=profile_id, status='private').all()
+
+    # Pass the public and private compounds to the template
+    return render_template('profile.html', logged_in=logged_in, user=user, public_compounds=public_compounds, private_compounds=private_compounds)
+
+@main.route('/api/public_compounds')
+def public_compounds():
+    # Fetch data for public compounds
+    public_compounds = Compounds.query.filter_by(user_id=current_user.id, status='public').all()
+
+    # Prepare response data
+    data = []
+    for compound in public_compounds:
+        compound_data = compound.to_dict()
+        # Add edit and delete buttons
+        edit_button = f'<button onclick="editCompound({compound.id})">Edit</button>'
+        delete_button = f'<button onclick="deleteCompound({compound.id})">Delete</button>'
+        compound_data['Action'] = f'{edit_button} | {delete_button}'
+        data.append(compound_data)
+
+    return jsonify(data)
+
+
+@main.route('/api/private_compounds')
+@login_required
+def private_compounds():
+    # Fetch data for private compounds if the user is authenticated
+    private_compounds = Compounds.query.filter_by(user_id=current_user.id, status='private').all()
+
+    # Prepare response data
+    data = []
+    for compound in private_compounds:
+        compound_data = compound.to_dict()
+        # Add edit and delete buttons
+        edit_button = f'<button onclick="editCompound({compound.id})">Edit</button>'
+        delete_button = f'<button onclick="deleteCompound({compound.id})">Delete</button>'
+        compound_data['Action'] = f'{edit_button} | {delete_button}'
+        data.append(compound_data)
+
+    return jsonify(data)
 
 @main.route('/compound/<int:compound_id>/delete', methods=['POST'])
 @login_required
