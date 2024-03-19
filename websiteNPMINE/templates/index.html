@@ -9,7 +9,15 @@
         <ul class="navbar-nav">
           <li class="nav-item">
             {% if logged_in %}
-            <p id="user_greeting">Hello, {{ current_user.username }}!</p>
+            <div class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Hello, {{ current_user.username }}!
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="{{ url_for('main.profile', profile_id=current_user.id) }}">My Profile</a>
+                <!-- Add more dropdown items as needed -->
+              </div>
+            </div>
             {% endif %}
           </li>
           <li class="nav-item">
@@ -28,7 +36,7 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ url_for('users.admin_panel') }}">Control Panel</a>
           </li>
-        {% endif %}
+          {% endif %}
         </ul>
       </div>
       {% if logged_in %}
@@ -41,6 +49,8 @@
       </ul>
       {% endif %}
     </div>
+  </nav>
+</div>
   </nav>    
   <div class="jumbotron p-3 py-3 pt-md-5 pb-md-4 mx-auto text-center text-white rounded bg-dark npmine-banner">
     <h1 class="search display-4 font-italic">Search</h1>
@@ -176,11 +186,12 @@ if (isAdmin) {
       },
     },
     style: {
-      table: {
-        wordWrap: 'break-word', // Set word wrap for the entire table
-      },
+        table: {
+            width: '100%', // Set the width to 100% for dynamic sizing
+            wordWrap: 'break-word', // Set word wrap for the entire table
+        },
     },
-  });
+});
 
   grid.render(document.getElementById('table'));
 </script>

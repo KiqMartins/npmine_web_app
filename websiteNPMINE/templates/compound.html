@@ -3,44 +3,54 @@
 {% block bannercontent %}
 <!-- Banner -->
 <div class="container">
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid">
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              {% if logged_in %}
-              <p id="user_greeting">Hello, {{ current_user.username }}!</p>
-              {% endif %}
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#about">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Downloads</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Documentation</a>
-            </li>
-            {% if current_user.is_authenticated and current_user.role.name == 'admin' %}
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('users.admin_panel') }}">Control Panel</a>
-            </li>
-          {% endif %}
-          </ul>
-        </div>
-        {% if logged_in %}
-        <ul class="navbar-nav ml-auto">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" id="login" href="/new_compound">
-              <button type="button" class="btn btn-outline-dark">Deposit</button>
-            </a>
+            {% if logged_in %}
+            <div class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Hello, {{ current_user.username }}!
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="{{ url_for('main.profile', profile_id=current_user.id) }}">My Profile</a>
+                <!-- Add more dropdown items as needed -->
+              </div>
+            </div>
+            {% endif %}
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Downloads</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Documentation</a>
+          </li>
+          {% if current_user.is_authenticated and current_user.role.name == 'admin' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('users.admin_panel') }}">Control Panel</a>
+          </li>
+          {% endif %}
         </ul>
-        {% endif %}
       </div>
+      {% if logged_in %}
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" id="login" href="/new_compound">
+            <button type="button" class="btn btn-outline-dark">Deposit</button>
+          </a>
+        </li>
+      </ul>
+      {% endif %}
+    </div>
+  </nav>
+</div>
     </nav>    
     <div class="jumbotron p-3 py-3 pt-md-5 pb-md-4 mx-auto text-center text-white rounded bg-dark npmine-banner">
       <h1 class="search display-4 font-italic">Search</h1>
@@ -95,27 +105,28 @@
           </tr>
       </tbody>
   </table>
-
-<h2>Additional Information - NP Classifier</h2>
+  <h2>Additional Information - NP Classifier</h2>
 <table class="table table-bordered">
     <tbody>
         <tr>
             <th scope="row">Pathway</th>
-            <td>{{ resposta_api.pathway_results[0] if resposta_api.pathway_results else "-" }}</td>
+            <td>{{ compound.pathway_results if compound.pathway_results else "-" }}</td>
         </tr>
         <tr>
             <th scope="row">Class</th>
-            <td>{{ resposta_api.class_results[0] if resposta_api.class_results else "-" }}</td>
+            <td>{{ compound.class_results if compound.class_results else "-" }}</td>
         </tr>
         <tr>
             <th scope="row">Superclass</th>
-            <td>{{ resposta_api.superclass_results[0] if resposta_api.superclass_results else "-" }}</td>
+            <td>{{ compound.superclass_results if compound.superclass_results else "-" }}</td>
         </tr>
         <tr>
             <th scope="row">Is Glycoside</th>
-            <td>{{ resposta_api.isglycoside[0] if resposta_api.isglycoside else "-" }}</td>
+            <td>{{ compound.isglycoside if compound.isglycoside else "-" }}</td>
         </tr>
         <tr>
+
+
     </tbody>
 </table>
 </div>

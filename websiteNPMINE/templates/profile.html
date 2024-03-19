@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+
+{% block bannercontent %}
+<!-- Banner -->
+<div class="container">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              {% if logged_in %}
+              <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Hello, {{ current_user.username }}!
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <a class="dropdown-item" href="{{ url_for('main.profile', profile_id=current_user.id) }}">My Profile</a>
+                  <!-- Add more dropdown items as needed -->
+                </div>
+              </div>
+              {% endif %}
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#about">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Downloads</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Documentation</a>
+            </li>
+            {% if current_user.is_authenticated and current_user.role.name == 'admin' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('users.admin_panel') }}">Control Panel</a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+        {% if logged_in %}
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" id="login" href="/new_compound">
+              <button type="button" class="btn btn-outline-dark">Deposit</button>
+            </a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+    </nav>
+  </div>
+    </nav>    
+    <div class="jumbotron p-3 py-3 pt-md-5 pb-md-4 mx-auto text-center text-white rounded bg-dark npmine-banner">
+      <h1 class="search display-4 font-italic">Search</h1>
+      <p class="search" style="font-size: 25px;">Explore chemical and taxonomic entities extracted by NPMINE</p>
+      <form id="search-form" class="form-inline justify-content-center mt-4 search-form" action="/search" method="GET">
+        <div class="input-group">
+            <input type="text" class="form-control search-input" id="search-input" name="q" placeholder="Search">
+            <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+        </div>
+    </form>
+  </div>
+</div>
+
+<div class="container">
+    <h1>{{ user.username }}'s Profile</h1>
+    <hr>
+    <h2>Public Compounds</h2>
+    <div id="public-compounds-table"></div>
+
+    {% if logged_in and (user.id == current_user.id or current_user.role.name == 'admin') %}
+    <h2>Private Compounds</h2>
+    <div id="private-compounds-table"></div>
+    {% endif %}
+</div>
+<div id="table"></div>
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      const publicTable = new gridjs.Grid({
+          columns: [
+              'ID',
+              'Compound Name',
+              'Action'
+          ],
+          server: {
+              url: '/api/public_compounds',
+              then: data => data.map(compound => [compound.id, compound.compound_name, `<button onclick="togglePrivacy(${compound.id})">Make ${compound.status === 'private' ? 'Public' : 'Private'}</button>`])
+          }
+      }).render(document.getElementById("public-compounds-table"));
+
+      const privateTable = new gridjs.Grid({
+          columns: [
+              'ID',
+              'Compound Name',
+              'Action'
+          ],
+          server: {
+              url: '/api/private_compounds',
+              then: data => data.map(compound => [compound.id, compound.compound_name, `<button onclick="togglePrivacy(${compound.id})">Make ${compound.status === 'private' ? 'Public' : 'Private'}</button> | <a href="/compound/${compound.id}/edit">Edit</a> | <a href="#" onclick="deleteCompound(${compound.id})">Delete</a>`])
+          }
+      }).render(document.getElementById("private-compounds-table"));
+  });
+
+  function togglePrivacy(compoundId) {
+      // Implement toggle privacy functionality here
+      console.log('Toggle privacy for compound with ID:', compoundId);
+  }
+
+  function deleteCompound(compoundId) {
+      // Implement delete compound functionality here
+      console.log('Delete compound with ID:', compoundId);
+  }
+</script>
+
+{% endblock %}
+
+

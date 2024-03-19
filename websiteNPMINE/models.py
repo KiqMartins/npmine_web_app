@@ -62,10 +62,15 @@ class Compounds(db.Model):
     article_url = db.Column(db.String(500))
     inchi_key = db.Column(db.String(5000))
     exact_molecular_weight = db.Column(db.Float)
+    class_results = db.Column(db.String(50))
+    superclass_results = db.Column(db.String(50))
+    pathway_results = db.Column(db.String(50))
+    isglycoside = db.Column(db.String(50))
     pubchem_id = db.Column(db.String(50))
     inchi = db.Column(db.String(5000))
     source = db.Column(db.String(10))
     user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
+    status = db.Column(db.String(10), nullable=False, default='private')
     
     # Add created_at field to track compound creation date
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -89,6 +94,11 @@ class Compounds(db.Model):
             'pubchem': self.pubchem_id,
             'source': self.source,
             'user_id': self.user_id,
+            'status': self.status,
+            'class_results': self.class_results,
+            'superclass_results': self.superclass_results,
+            'pathway_results': self.pathway_results,
+            'isglycoside': self.isglycoside,
         }
 
 
