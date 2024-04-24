@@ -24,14 +24,14 @@ def data():
 
     # Search filter
     search = request.args.get('search', '').strip()
-    search_query = db.or_(
+    search_query = or_(
         Compounds.id.like(f'%{search}%'),
-        Compounds.smiles.like(f'%{search}%')
+        Compounds.compound_name.like(f'%{search}%')
     )
 
     # Sorting
     sort = request.args.get('sort', '')
-    sort_columns = ['id', 'inchi', 'pubchem']
+    sort_columns = ['id', 'compound_name']  # Add more columns if needed
     order = []
     for field in sort.split(','):
         direction = '-' if field.startswith('-') else ''
@@ -44,7 +44,7 @@ def data():
         order.append(Compounds.id.asc())
 
     # Fetch data
-    query = Compounds.query
+    query = Compounds.query.filter_by(status='public')
     if search:
         query = query.filter(search_query)
     total = query.count()
@@ -57,9 +57,7 @@ def data():
         compound_data = compound.to_dict()
         compound_data['id'] = compound.id
         compound_data['compound_name'] = compound.compound_name
-        compound_data['compound_image'] = url_for('static', filename=f'{compound.compound_image}') if compound.compound_image else ''
-        inchi = compound.inchi
-        inchikey = compound.inchi_key
+        compound_data['compound_image'] = url_for('static', filename=compound.compound_image) if compound.compound_image else ''
 
         # Append edit and delete buttons based on authentication status
         if current_user.is_authenticated:
@@ -146,52 +144,12 @@ def profile(profile_id):
     if not user:
         abort(404)  # User not found
 
-    # Fetch public compounds inserted by the user
+    # Fetch both public and private compounds inserted by the user
     public_compounds = Compounds.query.filter_by(user_id=profile_id, status='public').all()
-
-    # Fetch private compounds if the logged-in user is the same as the profile owner or is an admin
-    private_compounds = []
-    if logged_in and (current_user.id == profile_id or current_user.role.name == 'admin'):
-        private_compounds = Compounds.query.filter_by(user_id=profile_id, status='private').all()
+    private_compounds = Compounds.query.filter_by(user_id=profile_id, status='private').all()
 
     # Pass the public and private compounds to the template
     return render_template('profile.html', logged_in=logged_in, user=user, public_compounds=public_compounds, private_compounds=private_compounds)
-
-@main.route('/api/public_compounds')
-def public_compounds():
-    # Fetch data for public compounds
-    public_compounds = Compounds.query.filter_by(user_id=current_user.id, status='public').all()
-
-    # Prepare response data
-    data = []
-    for compound in public_compounds:
-        compound_data = compound.to_dict()
-        # Add edit and delete buttons
-        edit_button = f'<button onclick="editCompound({compound.id})">Edit</button>'
-        delete_button = f'<button onclick="deleteCompound({compound.id})">Delete</button>'
-        compound_data['Action'] = f'{edit_button} | {delete_button}'
-        data.append(compound_data)
-
-    return jsonify(data)
-
-
-@main.route('/api/private_compounds')
-@login_required
-def private_compounds():
-    # Fetch data for private compounds if the user is authenticated
-    private_compounds = Compounds.query.filter_by(user_id=current_user.id, status='private').all()
-
-    # Prepare response data
-    data = []
-    for compound in private_compounds:
-        compound_data = compound.to_dict()
-        # Add edit and delete buttons
-        edit_button = f'<button onclick="editCompound({compound.id})">Edit</button>'
-        delete_button = f'<button onclick="deleteCompound({compound.id})">Delete</button>'
-        compound_data['Action'] = f'{edit_button} | {delete_button}'
-        data.append(compound_data)
-
-    return jsonify(data)
 
 @main.route('/compound/<int:compound_id>/delete', methods=['POST'])
 @login_required
@@ -266,6 +224,29 @@ def search():
         related_taxa=related_taxa,
         query=query
     )
+
+@main.route('/toggle_privacy/<int:compound_id>', methods=['POST'])
+@login_required
+def toggle_privacy(compound_id):
+    compound = Compounds.query.get_or_404(compound_id)
+
+    # Check if the current user has permission to change the privacy status
+    if current_user.id != compound.user_id:
+        abort(403)  # Forbidden
+
+    # Toggle the privacy status
+    if compound.status == 'private':
+        compound.status = 'public'
+        flash(f"Compound '{compound.compound_name}' is now public.", "success")
+    else:
+        compound.status = 'private'
+        flash(f"Compound '{compound.compound_name}' is now private.", "success")
+
+    # Commit the changes to the database
+    db.session.commit()
+
+    # Redirect back to the profile page
+    return redirect(url_for('main.profile', profile_id=current_user.id))
 
 
 

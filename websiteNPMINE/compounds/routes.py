@@ -26,6 +26,7 @@ compounds = Blueprint('inserts', __name__)
 @compounds.route('/new_compound', methods=['GET', 'POST'])
 @login_required
 def registerCompound():
+    logged_in = current_user.is_authenticated
     form = CompoundForm()
     if form.validate_on_submit():
         if form.inchikey.data=='':
@@ -61,7 +62,7 @@ def registerCompound():
         flash('Congratulations, you registered a new compound!')
         return redirect(url_for('main.home'))
     return render_template('new_compound.html',
-                           form=form)
+                           form=form,logged_in=logged_in)
 
 @compounds.route('/home/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
