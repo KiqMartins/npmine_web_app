@@ -14,7 +14,7 @@
                 Hello, {{ current_user.username }}!
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="{{ url_for('main.profile', profile_id=current_user.id) }}">My Profile</a>
+                <a class="dropdown-item" href="{{ url_for('main.profile', profile_id=current_user.id) }}">My Compounds</a>
                 <!-- Add more dropdown items as needed -->
               </div>
             </div>
@@ -52,16 +52,53 @@
   </nav>
 </div>
   </nav>    
-  <div class="jumbotron p-3 py-3 pt-md-5 pb-md-4 mx-auto text-center text-white rounded bg-dark npmine-banner">
-    <h1 class="search display-4 font-italic">Search</h1>
-    <p class="search" style="font-size: 25px;">Explore chemical and taxonomic entities extracted by NPMINE</p>
-    <form id="search-form" class="form-inline justify-content-center mt-4 search-form" action="/search" method="GET">
-      <div class="input-group">
-          <input type="text" class="form-control search-input" id="search-input" name="q" placeholder="Search">
-          <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+  <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="400" fill="var(--bs-secondary-color)"/></svg>
+        <div class="container">
+          <div class="carousel-caption text-start">
+            <h1>Example headline.</h1>
+            <p class="opacity-75">Some representative placeholder content for the first slide of the carousel.</p>
+          </div>
+        </div>
       </div>
-  </form>
-</div>
+      <div class="carousel-item">
+        <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="400" fill="var(--bs-secondary-color)"/></svg>
+        <div class="container">
+          <div class="carousel-caption">
+            <h1>Another example headline.</h1>
+            <p>Some representative placeholder content for the second slide of the carousel.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+      </div>
+      <div class="carousel-item">
+        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
+        <div class="container">
+          <div class="carousel-caption text-end">
+            <h1>One more for good measure.</h1>
+            <p>Some representative placeholder content for the third slide of this carousel.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
 {% block tablecontent %}
 <div class="container">
   <hr>
@@ -74,7 +111,7 @@
   };
 
   const editButtonFormatter = (cell, row) => {
-    return gridjs.html(`<div style="width: ${getTextWidth(cell)}px; white-space: nowrap;"><a href="/compound/${cell}/edit">Edit</a></div>`);
+    return gridjs.html(`<div style="width: 50px;"><a href="/compound/${cell}/edit">Edit</a></div>`);
   };
 
   const deleteButtonFormatter = (cell, row) => {
@@ -86,15 +123,6 @@
   `);
 };
 
-  // Function to calculate the width of the content
-  const getTextWidth = (text) => {
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-    context.font = "14px Arial"; // You can change the font size as needed
-    const metrics = context.measureText(text);
-    return metrics.width;
-  };
-
   // Retrieve the value of the logged_in variable from the server-side context
   const logged_in = {{ logged_in|default(false)|lower }};
 
@@ -103,6 +131,8 @@
       id: 'id',
       name: 'ID',
       sort: false,
+      width: 75,
+      resizeable: true,
       formatter: (cell, row) => {
         return gridjs.html('<a href="/compound/' + cell + '">' + cell + '</a>');
       }
@@ -131,12 +161,11 @@
     }
   }
 },
-    { id: 'inchikey', name: 'InChI Key', sort: false, style: { whiteSpace: 'nowrap' } },
+    { id: 'inchikey', name: 'InChI Key', sort: false, width: 200, resizeable: true, },
     {
       id: 'pubchem',
       name: 'PubChem ID',
       sort: false,
-      style: { whiteSpace: 'nowrap' },
       formatter: (cell, row) => {
         return gridjs.html('<a href="https://pubchem.ncbi.nlm.nih.gov/compound/' + cell + '">' + cell + '</a>');
       }
@@ -151,12 +180,12 @@ const isEditor = role_id === 2; // Change this value to match the editor role ID
 
 // Add edit button for editors and admins
 if (isEditor || isAdmin) {
-  columns.push({ id: 'id', name: 'Edit', sort: false, style: { whiteSpace: 'nowrap' }, formatter: editButtonFormatter });
+  columns.push({ id: 'id', name: 'Edit', sort: false, width: 100, resizable: true, formatter: editButtonFormatter });
 }
 
 // Add delete button for admins only
 if (isAdmin) {
-  columns.push({ id: 'id', name: 'Delete', sort: false, style: { whiteSpace: 'nowrap' }, formatter: deleteButtonFormatter });
+  columns.push({ id: 'id', name: 'Delete', sort: false, resizable: true, formatter: deleteButtonFormatter });
 }
 
   const grid = new gridjs.Grid({
@@ -185,12 +214,8 @@ if (isAdmin) {
         },
       },
     },
-    style: {
-        table: {
-            width: '100%', // Set the width to 100% for dynamic sizing
-            wordWrap: 'break-word', // Set word wrap for the entire table
-        },
-    },
+    resizable: true,
+    sort: true
 });
 
   grid.render(document.getElementById('table'));
