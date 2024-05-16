@@ -3,288 +3,227 @@
 {% block newcompoundcontent %}
 <!-- Banner -->
 <div class="container">
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid">
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              {% if logged_in %}
-              <div class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Hello, {{ current_user.username }}!
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                  <a class="dropdown-item" href="{{ url_for('main.profile', profile_id=current_user.id) }}">My Compounds</a>
-                  <!-- Add more dropdown items as needed -->
-                </div>
-              </div>
-              {% endif %}
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#about">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Downloads</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Documentation</a>
-            </li>
-            {% if current_user.is_authenticated and current_user.role.name == 'admin' %}
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('users.admin_panel') }}">Control Panel</a>
-            </li>
-            {% endif %}
-          </ul>
-        </div>
-        {% if logged_in %}
-        <ul class="navbar-nav ml-auto">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" id="login" href="/new_compound">
-              <button type="button" class="btn btn-outline-dark">Deposit</button>
-            </a>
-          </li>
-        </ul>
-        {% endif %}
-      </div>
-    </nav>
-  </div>
-    </nav>    
-    <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-      </div>
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="400" fill="var(--bs-secondary-color)"/></svg>
-          <div class="container">
-            <div class="carousel-caption text-start">
-              <h1>Example headline.</h1>
-              <p class="opacity-75">Some representative placeholder content for the first slide of the carousel.</p>
-            </div>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="400" fill="var(--bs-secondary-color)"/></svg>
-          <div class="container">
-            <div class="carousel-caption">
-              <h1>Another example headline.</h1>
-              <p>Some representative placeholder content for the second slide of the carousel.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-        </div>
-        <div class="carousel-item">
-          <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
-          <div class="container">
-            <div class="carousel-caption text-end">
-              <h1>One more for good measure.</h1>
-              <p>Some representative placeholder content for the third slide of this carousel.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
-    </div>
-<div class="container">
-  <div class="row">
-    <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-      <div class="card border-0 shadow rounded-3 my-5">
-        <div class="card-body p-4 p-sm-5">
-          <h5 class="card-title text-center mb-5 fw-light fs-5">Register Compound</h5>
-          <p style="text-align: center;">To deposit a new compound to the NPmine, please fill in the below form with the InChI Key, as well as the details about producing organism (genus + species) if available.</p>
-          <br>
-          <form method="POST" action="">
-            {{ form.hidden_tag() }}
-            <fieldset class="form-group">
-              <br>
-              <div id="compounds">
-                <div class="compoundBlock" id="compound_1">
-                  <h6>Compound 1</h6>
-                  <div class="form-group">
-                    {{ form.inchikey.label(class="form-control-label") }}
-                    {% if form.inchikey.errors %}
-                        {{ form.inchikey(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.inchikey.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.inchikey(class="form-control form-control-lg") }}
-                    {% endif %}
-                  </div>
-                  <div class="form-group">
-                    <label for="genus_1">Genus:</label>
-                    <input type="text" class="form-control" id="genus_1" name="genus[]">
-                  </div>
-                  <div class="form-group">
-                    <label for="origin_type_1">Origin Type:</label>
-                    <div class="dropdown">
-                      <select class="form-control" id="origin_type_1" name="origin_type[]">
-                        <option value="Bacteria">Bacteria</option>
-                        <option value="Fungi">Fungi</option>
-                      </select>
-                      <div class="dropdown-indicator"></div>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="species_1">Species:</label>
-                    <input type="text" class="form-control" id="species_1" name="species[]" value="sp">
-                  </div>
-                  <button type="button" class="btn btn-danger btn-sm deleteCompound">Delete</button>
-                  <br><br> <!-- Add spacing -->
-                </div>
+            {% if logged_in %}
+            <div class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Hello, {{ current_user.username }}!
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="{{ url_for('main.profile', profile_id=current_user.id) }}">My Compounds</a>
+                <!-- Add more dropdown items as needed -->
               </div>
-            </fieldset>
-            <button type="button" id="addCompound" class="btn btn-secondary">Add Compound</button>
-            <br><br>
-            <div class="form-group">
-                {{ form.submit(class="btn btn-dark") }}
             </div>
-            <br>
-          </form>
+            {% endif %}
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Downloads</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Documentation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Search</a>
+          </li>
+          {% if current_user.is_authenticated and current_user.role.name == 'admin' %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('users.admin_panel') }}">Control Panel</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+      {% if logged_in %}
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" id="login" href="/new_compound">
+            <button type="button" class="btn btn-outline-dark">Deposit</button>
+          </a>
+        </li>
+      </ul>
+      {% endif %}
+    </div>
+  </nav>
+</div>
+  </nav>    
+  <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="400" fill="var(--bs-secondary-color)"/></svg>
+        <div class="container">
+          <div class="carousel-caption text-start">
+            <h1>Example headline.</h1>
+            <p class="opacity-75">Some representative placeholder content for the first slide of the carousel.</p>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="400" fill="var(--bs-secondary-color)"/></svg>
+        <div class="container">
+          <div class="carousel-caption">
+            <h1>Another example headline.</h1>
+            <p>Some representative placeholder content for the second slide of the carousel.</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+      </div>
+      <div class="carousel-item">
+        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
+        <div class="container">
+          <div class="carousel-caption text-end">
+            <h1>One more for good measure.</h1>
+            <p>Some representative placeholder content for the third slide of this carousel.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card border-0 shadow rounded-3 my-5">
+                    <div class="card-body p-4 p-sm-5">
+                        <h5 class="card-title text-center mb-5 fw-light fs-5">Register Compound</h5>
+                        <p style="text-align: center;">To deposit a new compound to the NPmine, please fill in the below form with the InChI Key, as well as the details about producing organism (genus + species) if available.</p>
+                        <br>
+                        <!-- DOI link input field -->
+                        <form method="POST" action="{{ url_for('compounds.registerCompound') }}">
+                            {{ form.hidden_tag() }}
+                            <fieldset class="form-group">
+                                <div class="form-group">
+                                    <label for="doi">DOI Link:</label>
+                                    <input type="text" class="form-control" id="doi" name="doi" required>
+                                </div>
+                            </fieldset>
+                            <!-- End of DOI link input field -->
 
-<script>
-    document.getElementById('addCompound').addEventListener('click', function() {
-        var compoundsDiv = document.getElementById('compounds');
-        var compoundCount = compoundsDiv.getElementsByClassName('compoundBlock').length + 1;
+                            <!-- Compound registration form -->
+                            <fieldset class="form-group" id="compounds">
+                                <!-- Compound registration blocks -->
+                                <div class="compoundBlock" id="compound_1">
+                                    <!-- Compound 1 -->
+                                    <h6>Compound 1</h6>
+                                    <!-- InChI Key -->
+                                    <div class="form-group">
+                                        {{ form.inchikey.label(class="form-control-label") }}
+                                        {% if form.inchikey.errors %}
+                                        {{ form.inchikey(class="form-control form-control-lg is-invalid") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.inchikey.errors %}
+                                            <span>{{ error }}</span>
+                                            {% endfor %}
+                                        </div>
+                                        {% else %}
+                                        {{ form.inchikey(class="form-control form-control-lg") }}
+                                        {% endif %}
+                                    </div>
+                                    <!-- Genus -->
+                                    <div class="form-group">
+                                        <label for="genus_1">Genus:</label>
+                                        <input type="text" class="form-control" id="genus_1" name="genus">
+                                    </div>
+                                    <!-- Origin Type -->
+                                    <div class="form-group">
+                                        <label for="origin_type_1">Origin Type:</label>
+                                        <select class="form-control" id="origin_type_1" name="origin_type">
+                                            <option value="Bacteria">Bacteria</option>
+                                            <option value="Fungi">Fungi</option>
+                                        </select>
+                                    </div>
+                                    <!-- Species -->
+                                    <div class="form-group">
+                                        <label for="species_1">Species:</label>
+                                        <input type="text" class="form-control" id="species_1" name="species" value="sp">
+                                    </div>
+                                    <!-- Delete button -->
+                                    <button type="button" class="btn btn-danger btn-sm deleteCompound">Delete</button>
+                                    <!-- Spacing -->
+                                    <br><br>
+                                </div>
+                                <!-- End of Compound 1 -->
+                            </fieldset>
+                            <!-- End of Compound registration form -->
 
-        var compoundBlock = document.createElement('div');
-        compoundBlock.className = 'compoundBlock';
-        compoundBlock.id = 'compound_' + compoundCount;
+                            <!-- Add Compound button -->
+                            <button type="button" id="addCompound" class="btn btn-secondary">Add Compound</button>
+                            <br><br>
+                            <!-- Submit button -->
+                            <div class="form-group">
+                                {{ form.submit(class="btn btn-dark") }}
+                            </div>
+                            <br>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        var compoundLabel = document.createElement('h6');
-        compoundLabel.textContent = 'Compound ' + compoundCount;
-        compoundBlock.appendChild(compoundLabel);
+    <script>
+        document.getElementById('addCompound').addEventListener('click', function() {
+            var compoundsDiv = document.getElementById('compounds');
+            var compoundCount = compoundsDiv.getElementsByClassName('compoundBlock').length + 1;
 
-        var formGroup1 = document.createElement('div');
-        formGroup1.className = 'form-group';
-        compoundBlock.appendChild(formGroup1);
+            // Clone the first compound block
+            var firstCompoundBlock = document.getElementById('compound_1');
+            var newCompoundBlock = firstCompoundBlock.cloneNode(true);
 
-        var inchikeyLabel = document.createElement('label');
-        inchikeyLabel.textContent = 'Inchi Key:';
-        formGroup1.appendChild(inchikeyLabel);
+            // Update IDs and names
+            newCompoundBlock.id = 'compound_' + compoundCount;
+            newCompoundBlock.getElementsByTagName('h6')[0].textContent = 'Compound ' + compoundCount;
 
-        var inchikeyInput = document.createElement('input');
-        inchikeyInput.type = 'text';
-        inchikeyInput.className = 'form-control';
-        inchikeyInput.name = 'inchikeys[]';
-        formGroup1.appendChild(inchikeyInput);
+            var inputs = newCompoundBlock.querySelectorAll('input, select');
+            inputs.forEach(function(input) {
+                input.name = input.name.replace('[1]', '[' + compoundCount + ']');
+                input.value = ''; // Clear input values
+            });
 
-        var formGroup2 = document.createElement('div');
-        formGroup2.className = 'form-group';
-        compoundBlock.appendChild(formGroup2);
+            var buttons = newCompoundBlock.querySelectorAll('button');
+            buttons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    newCompoundBlock.remove();
+                    updateCompoundHeaders();
+                });
+            });
 
-        var genusLabel = document.createElement('label');
-        genusLabel.textContent = 'Genus:';
-        formGroup2.appendChild(genusLabel);
+            // Append the new compound block
+            compoundsDiv.appendChild(newCompoundBlock);
 
-        var genusInput = document.createElement('input');
-        genusInput.type = 'text';
-        genusInput.className = 'form-control';
-        genusInput.name = 'genus[]';
-        formGroup2.appendChild(genusInput);
-
-        var formGroup3 = document.createElement('div');
-        formGroup3.className = 'form-group';
-        compoundBlock.appendChild(formGroup3);
-
-        var originTypeLabel = document.createElement('label');
-        originTypeLabel.textContent = 'Origin Type:';
-        formGroup3.appendChild(originTypeLabel);
-
-        var originTypeWrapper = document.createElement('div');
-        originTypeWrapper.className = 'dropdown';
-
-        var originTypeSelect = document.createElement('select');
-        originTypeSelect.className = 'form-control';
-        originTypeSelect.id = 'origin_type_' + compoundCount;
-        originTypeSelect.name = 'origin_type[]';
-
-        var bacteriaOption = document.createElement('option');
-        bacteriaOption.value = 'Bacteria';
-        bacteriaOption.textContent = 'Bacteria';
-        originTypeSelect.appendChild(bacteriaOption);
-
-        var fungiOption = document.createElement('option');
-        fungiOption.value = 'Fungi';
-        fungiOption.textContent = 'Fungi';
-        originTypeSelect.appendChild(fungiOption);
-
-        originTypeWrapper.appendChild(originTypeSelect);
-
-        var dropdownIndicator = document.createElement('div');
-        dropdownIndicator.className = 'dropdown-indicator';
-        originTypeWrapper.appendChild(dropdownIndicator);
-
-        formGroup3.appendChild(originTypeWrapper);
-
-        var formGroup4 = document.createElement('div');
-        formGroup4.className = 'form-group';
-        compoundBlock.appendChild(formGroup4);
-
-        var speciesLabel = document.createElement('label');
-        speciesLabel.textContent = 'Species:';
-        formGroup4.appendChild(speciesLabel);
-
-        var speciesInput = document.createElement('input');
-        speciesInput.type = 'text';
-        speciesInput.className = 'form-control';
-        speciesInput.name = 'species[]';
-        speciesInput.value = 'sp';
-        formGroup4.appendChild(speciesInput);
-
-        var deleteButton = document.createElement('button');
-        deleteButton.type = 'button';
-        deleteButton.className = 'btn btn-danger btn-sm deleteCompound';
-        deleteButton.textContent = 'Delete';
-        deleteButton.addEventListener('click', function() {
-            compoundBlock.remove();
-            updateCompoundIds();
+            // Update headers
+            function updateCompoundHeaders() {
+                var compoundBlocks = compoundsDiv.getElementsByClassName('compoundBlock');
+                for (var i = 0; i < compoundBlocks.length; i++) {
+                    compoundBlocks[i].getElementsByTagName('h6')[0].textContent = 'Compound ' + (i + 1);
+                }
+            }
         });
-        compoundBlock.appendChild(deleteButton);
-
-        compoundsDiv.appendChild(compoundBlock);
-
-        // Add spacing
-        var br1 = document.createElement('br');
-        var br2 = document.createElement('br');
-        compoundBlock.appendChild(br1);
-        compoundBlock.appendChild(br2);
-
-        // Update IDs
-        updateCompoundIds();
-    });
-
-    function updateCompoundIds() {
-        var compoundsDiv = document.getElementById('compounds');
-        var compoundBlocks = compoundsDiv.getElementsByClassName('compoundBlock');
-        for (var i = 0; i < compoundBlocks.length; i++) {
-            compoundBlocks[i].id = 'compound_' + (i + 1);
-            compoundBlocks[i].getElementsByTagName('h6')[0].textContent = 'Compound ' + (i + 1);
-        }
-    }
-</script>
-{% endblock newcompoundcontent %}
+    </script>
+</div>
+{% endblock %}
 
 
 
