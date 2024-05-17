@@ -1,11 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, SelectField
+from wtforms.validators import DataRequired, Optional
 
 class CompoundForm(FlaskForm):
-    smiles = StringField('SMILES', validators=[DataRequired()])
-    inchi = StringField('InChI')
-    inchikey = StringField('InChI Key')
-    pubchem = StringField("Pubchem ID")
-    user_id = StringField("User ID")
-    submit = SubmitField("Submit")
+    doi = StringField('DOI Link', validators=[DataRequired()])
+    inchikey = StringField('InChI Key', validators=[DataRequired()])
+    genus = StringField('Genus', validators=[Optional()])
+    origin_type = SelectField('Origin Type', choices=[('Bacteria', 'Bacteria'), ('Fungi', 'Fungi')])
+    species = StringField('Species', default='sp', validators=[Optional()])
+    submit = SubmitField('Submit')
+
