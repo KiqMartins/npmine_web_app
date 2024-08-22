@@ -10,109 +10,145 @@ from websiteNPMINE.compounds.utils import *
 from rdkit import Chem
 from rdkit.Chem import Draw
 import pubchempy as pcp
+from PIL import Image
 
 
 compounds = Blueprint('compounds', __name__)
 
 def save_compound_image(compound_id, smiles):
-    try:
-        # Create directory if it doesn't exist
-        image_dir = os.path.join(current_app.root_path, 'static', 'compound_images')
-        os.makedirs(image_dir, exist_ok=True)
+    # Generate the filename
+    filename = f"{compound_id}.png"
+    relative_path = os.path.join('compound_images', filename)
+    
+    # Normalize the path and replace backslashes with forward slashes
+    relative_path = os.path.normpath(relative_path).replace("\\", "/")
 
-        # Save compound image
-        img_path = os.path.join(image_dir, f'{compound_id}.png')
+    # Define the full path to save the image
+    full_path = os.path.join(current_app.root_path, 'static', relative_path)
+
+    # Check if the image already exists; if not, generate it
+    if not os.path.exists(full_path):
         mol = Chem.MolFromSmiles(smiles)
-        if mol:
-            Draw.MolToFile(mol, img_path)
-            return img_path
-    except Exception as e:
-        print(f"Error saving compound image: {e}")
+        img = Draw.MolToImage(mol, size=(200, 200))
+        img.save(full_path)
+
+    # Return the relative path to be stored in the database
+    return relative_path
 
 @compounds.route('/new_compound', methods=['GET', 'POST'])
 @login_required
 def registerCompound():
     logged_in = current_user.is_authenticated
     form = CompoundForm()
-    
+
     if form.validate_on_submit():
         doi = form.doi.data
-        inchikey = form.inchikey.data
-        genus = form.genus.data
-        origin_type = form.origin_type.data
-        species = form.species.data
-        
-        # Check if DOI and InChI Key are provided
+
+        # Ensure DOI is provided
         if not doi:
             flash('DOI Link is required', 'error')
             return redirect(request.url)
-        if not inchikey:
-            flash('InChI Key is required', 'error')
-            return redirect(request.url)
-        
-        # Fetch compound data from PubChem
-        pubchem_data = fetch_pubchem_data(inchikey)
-        if not pubchem_data:
-            flash('Failed to fetch data from PubChem', 'error')
-            return redirect(request.url)
-        
-        # Create Compounds object
-        compound = Compounds(
-            journal=None,
-            compound_name=pubchem_data['compound_name'],
-            smiles=pubchem_data['smiles'],
-            article_url=doi,
-            inchi_key=inchikey,
-            exact_molecular_weight=pubchem_data['exact_molecular_weight'],
-            class_results=None,
-            superclass_results=None,
-            pathway_results=None,
-            isglycoside=None,
-            pubchem_id=pubchem_data['pubchem_id'],
-            inchi=pubchem_data['inchi'],
-            source='NPMine',
-            user_id=current_user.id
-        )
-        db.session.add(compound)
-        db.session.commit()
 
-        # Fetch PubChem data and get smiles
-        pubchem_data = fetch_pubchem_data(inchikey)
-        smiles = pubchem_data.get('smiles')
-        
-        # Save compound image
-        img_path = save_compound_image(compound.id, smiles)
-        if img_path:
-            # Update compound image path in database
-            compound = Compounds.query.get(compound.id)
-            compound.compound_image = img_path
+        # Check if DOI exists in the DOI table
+        existing_doi = DOI.query.filter_by(doi=doi).first()
+
+        if not existing_doi:
+            # If DOI does not exist, create a new DOI object
+            new_doi = DOI(doi=doi)
+            db.session.add(new_doi)
             db.session.commit()
-        
-        # Create Taxa object if genus is provided
-        if genus:
-            verbatim = f"{genus} {species}"
-            taxon = Taxa(
-                article_url=doi,
-                verbatim=verbatim,
-                odds=None,
-                datasourceid=None,
-                taxonid=None,
-                classificationpath=None,
-                classificationrank=None,
-                matchtype=None,
-                user_id=current_user.id
-            )
-            db.session.add(taxon)
-            db.session.commit()
-        
-        flash('Compound added successfully!', 'success')
+            existing_doi = new_doi
+        else:
+            flash('DOI already in database!', 'info')
+
+        compound_blocks = request.form.getlist('inchikey')  # This should return all inchikey fields
+        for i, inchikey in enumerate(compound_blocks):
+            genus = request.form.getlist('genus')[i]
+            species = request.form.getlist('species')[i]
+
+            # Validate InChI Key
+            if not inchikey:
+                flash(f'InChI Key is required for Compound {i + 1}', 'error')
+                continue  # Skip this compound if InChI Key is missing
+
+            # Check if InChI Key exists
+            existing_compound = Compounds.query.filter_by(inchi_key=inchikey).first()
+
+            if existing_compound:
+                if existing_doi in existing_compound.dois:
+                    flash(f'DOI and InChI Key already in database for Compound {i + 1}!', 'info')
+                    continue  # Skip this compound as both DOI and InChI Key are already present
+            else:
+                # Fetch compound data from PubChem
+                pubchem_data = fetch_pubchem_data(inchikey)
+                if not pubchem_data:
+                    flash(f'Failed to fetch data from PubChem for Compound {i + 1}', 'error')
+                    continue
+
+                # Create Compounds object
+                compound = Compounds(
+                    journal=None,
+                    compound_name=pubchem_data['compound_name'],
+                    smiles=pubchem_data['smiles'],
+                    article_url=doi,
+                    inchi_key=inchikey,
+                    exact_molecular_weight=pubchem_data['exact_molecular_weight'],
+                    class_results=None,
+                    superclass_results=None,
+                    pathway_results=None,
+                    isglycoside=None,
+                    pubchem_id=pubchem_data['pubchem_id'],
+                    inchi=pubchem_data['inchi'],
+                    source='NPMine',
+                    user_id=current_user.id
+                )
+                db.session.add(compound)
+                db.session.commit()
+
+                # Associate the compound with the DOI
+                compound.dois.append(existing_doi)
+                db.session.commit()
+
+                # Save compound image
+                smiles = pubchem_data.get('smiles')
+                img_path = save_compound_image(compound.id, smiles)
+                if img_path:
+                    # Update compound image path in the database
+                    compound.compound_image = img_path
+                    db.session.commit()
+
+            # Check if species exists for the given genus
+            existing_taxon = Taxa.query.filter_by(verbatim=f"{genus} {species}").first()
+            if not existing_taxon:
+                # Create Taxa object if genus is provided
+                if genus:
+                    taxon = Taxa(
+                        article_url=doi,
+                        verbatim=f"{genus} {species}",
+                        odds=None,
+                        datasourceid=None,
+                        taxonid=None,
+                        classificationpath=None,
+                        classificationrank=None,
+                        matchtype=None,
+                        user_id=current_user.id
+                    )
+                    db.session.add(taxon)
+                    db.session.commit()
+
+                    # Associate the taxa with the DOI
+                    taxon.dois.append(existing_doi)
+                    db.session.commit()
+
+        flash('Compounds added successfully!', 'success')
         return redirect(url_for('compounds.registerCompound'))
-    
+
     # Display validation errors
     for error in form.errors.values():
         flash(error[0], 'error')
-    
+
     return render_template('new_compound.html', form=form, logged_in=logged_in)
+
 
 def fetch_pubchem_data(inchikey):
     try:
