@@ -14,7 +14,7 @@
                 Hello, {{ current_user.username }}!
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="{{ url_for('main.profile', profile_id=current_user.id) }}">My Profile</a>
+                <a class="dropdown-item" href="{{ url_for('main.profile', profile_id=current_user.id) }}">My Compounds</a>
                 <!-- Add more dropdown items as needed -->
               </div>
             </div>
@@ -31,6 +31,9 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Documentation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Search</a>
           </li>
           {% if current_user.is_authenticated and current_user.role.name == 'admin' %}
           <li class="nav-item">
@@ -52,48 +55,87 @@
   </nav>
 </div>
   </nav>    
-  <div class="jumbotron p-3 py-3 pt-md-5 pb-md-4 mx-auto text-center text-white rounded bg-dark npmine-banner">
-    <h1 class="search display-4 font-italic">Search</h1>
-    <form id="search-form" class="form-inline justify-content-center mt-4 search-form" action="/search" method="GET">
-      <div class="input-group">
-          <input type="text" class="form-control search-input" id="search-input" name="q" placeholder="Search">
-          <button type="submit" class="btn btn-primary submit-btn">Submit</button>
+  <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="400" fill="var(--bs-secondary-color)"/></svg>
+        <div class="container">
+          <div class="carousel-caption text-start">
+            <h1>Example headline.</h1>
+            <p class="opacity-75">Some representative placeholder content for the first slide of the carousel.</p>
+          </div>
+        </div>
       </div>
-  </form>
-</div>
-<div class="container w-50 p-3">
-  <table class="table table-bordered">
-    <tbody>
-        <tr>
-            <th scope="row">Journal Name</th>
-            <td>{{ journal_name }}</td>
-        </tr>
-        <tr>
-          <th scope="row">Created At</th>
-          <td>{{ created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-        </tr>
-        <tr>
-            <th scope="row">URL Link</th>
-            <td><a href="{{ article_url }}" target="_blank">{{ article_url }}</a></td>
-        </tr>
-        <tr>
-          <th scope="row">Compounds extracted</th>
-        <td>
-          {% if related_compound_names %}
-            <ul>
-              {% for compound_name in related_compound_names %}
-                {% set compound_id = compound_name_to_id_map.get(compound_name) %}
-                {% if compound_id %}
-                  <li><a href="{{ url_for('main.compound', compound_id=compound_id) }}">{{ compound_name }}</a></li>
-                {% else %}
-                  <li>{{ compound_name }}</li>
-                {% endif %}
-              {% endfor %}
-            </ul>
-          {% else %}
-            No compounds extracted
-          {% endif %}
-        </td>
+      <div class="carousel-item">
+        <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="400" fill="var(--bs-secondary-color)"/></svg>
+        <div class="container">
+          <div class="carousel-caption">
+            <h1>Another example headline.</h1>
+            <p>Some representative placeholder content for the second slide of the carousel.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+      </div>
+      <div class="carousel-item">
+        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
+        <div class="container">
+          <div class="carousel-caption text-end">
+            <h1>One more for good measure.</h1>
+            <p>Some representative placeholder content for the third slide of this carousel.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+  <div class="container w-50 p-3">
+    <table class="table table-bordered">
+      <tbody>
+          <tr>
+              <th scope="row">Journal Name</th>
+              <td>{{ journal_name }}</td>
+          </tr>
+          <tr>
+            <th scope="row">Created At</th>
+            <td>{{ created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+          </tr>
+          <tr>
+              <th scope="row">URL Link</th>
+              <td><a href="{{ article_url }}" target="_blank">{{ article_url }}</a></td>
+          </tr>
+          <tr>
+            <th scope="row">Compounds extracted</th>
+            <td>
+              {% if related_compound_names %}
+                <ul>
+                  {% for compound_name in related_compound_names %}
+                    {% set compound_id = compound_name_to_id_map.get(compound_name) %}
+                    {% if compound_id %}
+                      <li><a href="{{ url_for('main.compound', compound_id=compound_id) }}">{{ compound_name }}</a></li>
+                    {% else %}
+                      <li>{{ compound_name }}</li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              {% else %}
+                No compounds extracted
+              {% endif %}
+            </td>
+          </tr>
           <tr>
             <th scope="row">Taxa extracted</th>
             <td>
@@ -108,7 +150,7 @@
               {% endif %}
             </td>
           </tr>
-    </tbody>
-</table>
-</div>
+      </tbody>
+    </table>
+  </div>
 {% endblock %}

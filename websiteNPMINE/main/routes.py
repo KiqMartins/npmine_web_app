@@ -92,12 +92,13 @@ def compound(compound_id):
 @main.route('/article/<int:article_id>')
 def article(article_id):
     logged_in = current_user.is_authenticated  # Check if the user is logged in
+    
     # Fetch article from the DOI table based on the article_id
     doi_record = DOI.query.get(article_id)
     if not doi_record:
         abort(404)
     
-     # Retrieve the compounds associated with the article
+    # Retrieve the compounds associated with the article
     compounds = doi_record.compounds
 
     if compounds:
@@ -110,30 +111,38 @@ def article(article_id):
         article_url = None
         created_at = None
 
-    # Retrieve related compound names
-    related_compound_names = set()
-    for doi_compound in compounds:
-        related_compounds = Compounds.query.join(doicomp).filter(doicomp.columns.doi_id == article_id).all()
-        for compound in related_compounds:
-            related_compound_names.add(compound.compound_name)
-    
-    cleaned_related_compound_names = [name for name in related_compound_names if name is not None]
+    # Gather related compound names, associated species (taxa), and other data
+    related_compound_names = []
+    compound_name_to_id_map = {}
+    verbatim_values = set()
 
-    # Retrieve compound IDs for the related compound names
-    compound_name_to_id_map = {}  # Create an empty dictionary
-    for compound_name in cleaned_related_compound_names:
-        compound = Compounds.query.filter_by(compound_name=compound_name).first()
-        if compound:
-            compound_name_to_id_map[compound_name] = compound.id
+    # Retrieve all taxa associated with the DOI
+    taxa_for_doi = Taxa.query.filter(Taxa.dois.any(id=article_id)).all()
+    taxa_verbatim_values = set(taxon.verbatim for taxon in taxa_for_doi)
 
-    # Retrieve matches in the taxa table based on the article_url
-    matching_taxa = Taxa.query.filter_by(article_url=article_url).all()
+    for compound in compounds:
+        compound_name = compound.compound_name
+        compound_id = compound.id
+        related_compound_names.append(compound_name)
+        compound_name_to_id_map[compound_name] = compound_id
 
-    # Retrieve the list of verbatim values associated with the matches
-    verbatim_values = [taxon.verbatim for taxon in matching_taxa]
+        # Collect species (taxa) associated with the DOI and compound
+        for taxon in taxa_for_doi:
+            if taxon in doi_record.taxa:
+                verbatim_values.add(taxon.verbatim)  # Use a set to avoid duplicates
 
-    # Pass the article to the template
-    return render_template('article.html', doi_record=doi_record, journal_name=journal_name, article_url=article_url, created_at=created_at, related_compound_names=cleaned_related_compound_names, logged_in=logged_in, verbatim_values=verbatim_values, compound_name_to_id_map=compound_name_to_id_map)
+    # Pass the article and related compounds to the template
+    return render_template('article.html', 
+                           doi_record=doi_record, 
+                           journal_name=journal_name, 
+                           article_url=article_url, 
+                           created_at=created_at, 
+                           related_compound_names=related_compound_names, 
+                           compound_name_to_id_map=compound_name_to_id_map, 
+                           verbatim_values=verbatim_values, 
+                           logged_in=logged_in)
+
+
 
 @main.route('/profile/<int:profile_id>')
 @login_required

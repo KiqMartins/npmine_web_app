@@ -135,10 +135,8 @@
               <th scope="row">Articles</th>
               <td>
                   <ul>
-                    {% for article_id, article_url in articles %}
-                <li>
-                    <a href="{{ url_for('main.article', article_id=article_id) }}" target="_blank">{{ article_url }}</a>
-                </li>
+                    {% for article_id, article_doi in articles %}
+                    <li><a href="{{ url_for('main.article', article_id=article_id) }}">{{ article_doi }}</a></li>
                 {% endfor %}
                   </ul>
               </td>
