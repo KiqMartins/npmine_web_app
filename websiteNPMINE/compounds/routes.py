@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, flash, redirect, url_for, request, current_app
+from flask import Blueprint, render_template, flash, redirect, url_for, request, current_app, g
 from flask_login import login_required, current_user
-from websiteNPMINE.compounds.forms import CompoundForm
+from websiteNPMINE.compounds.forms import CompoundForm, SearchForm
 from websiteNPMINE.models import Compounds,DOI,Taxa
 from websiteNPMINE import db
 import os
@@ -11,7 +11,8 @@ from rdkit import Chem
 from rdkit.Chem import Draw
 import pubchempy as pcp
 from PIL import Image
-
+from datetime import datetime, timezone
+from flask_babel import Babel, get_locale
 
 compounds = Blueprint('compounds', __name__)
 
@@ -169,3 +170,20 @@ def fetch_pubchem_data(inchikey):
 def editCompound(id):
     return render_template('editCompound.html')
 
+@compounds.route('/search')
+def search():
+    logged_in = current_user.is_authenticated
+    q = request.args.get("q")
+
+    if q:
+        results = Compounds.query.filter(
+            Compounds.compound_name.ilike(f"%{q}%") | 
+            Compounds.smiles.ilike(f"%{q}%") | Compounds.inchi_key.ilike(f"%{q}%")
+        ).order_by(Compounds.compound_name.asc()).limit(100).all()
+    else:
+        results = []
+
+    if request.headers.get('HX-Request') == 'true':
+        return render_template('search_results.html', results=results)
+    
+    return render_template('search.html', results=results, logged_in=logged_in)

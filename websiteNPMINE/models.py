@@ -3,6 +3,8 @@ from flask_login import UserMixin
 from itsdangerous import TimedSerializer as Serializer
 from flask import current_app
 from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
+
 
 @login_manager.user_loader
 def load_user(user_id):

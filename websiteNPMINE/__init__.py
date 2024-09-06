@@ -16,9 +16,10 @@ login_manager.login_view = 'main.home'
 login_manager.login_message_category = 'info'
 bootstrap = Bootstrap4()
 
+
 def create_app(config_class=Config):
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object(config_class)
     bcrypt.init_app(app)
     db.init_app(app)
     bootstrap.init_app(app)
@@ -34,4 +35,7 @@ def create_app(config_class=Config):
 
     migrate = Migrate(app,db)
 
+
     return app
+
+
