@@ -111,7 +111,7 @@
         <div class="columns">
           <div class="column is-one-third is-offset-one-third">
             <input type="text" class="input" placeholder="Search" name="q"
-            hx-get="/search" 
+            hx-get="/search_taxon" 
             hx-trigger="keyup changed delay:500ms"
             hx-target="#results" 
             hx-swap="innerHTML">
@@ -121,21 +121,49 @@
       <table class="table is-fullwidth">
           <thead>
               <tr>
-                  <th>Compound Name</th>
-                  <th>SMILES</th>
-                  <th>InChI Key</th>
-                  <th>DOIs</th>
+                  <th>Taxon</th>
+                  <th>Related Compounds</th>
+                  <th>Related DOI</th>
               </tr>
           </thead>
           <tbody id="results">
-              {% for result in results %}
-                  <tr>
-                      <td>{{ result.compound_name }}</td>
-                      <td>{{ result.smiles }}</td>
-                      <td>{{ result.inchi_key }}</td>
-                      <td>{{ result.dois }}</td>
-                  </tr>
-              {% endfor %}
+            {% for result in results %}
+          <tr>
+            <!-- Display the Taxon verbatim -->
+            <td>{{ result.verbatim }}</td>
+
+            <!-- Display related Compounds -->
+            <td>
+              {% set compound_names = [] %}
+              {% if result.dois %}
+                {% for doi in result.dois %}
+                  {% for compound in doi.compounds %}
+                    {% if compound.compound_name not in compound_names %}
+                      {% set _ = compound_names.append(compound.compound_name) %}
+                    {% endif %}
+                  {% endfor %}
+                {% endfor %}
+              {% endif %}
+              {{ compound_names | join(', ') if compound_names else 'No related compounds' }}
+            </td>
+
+            <!-- Display related DOIs -->
+            <td>
+              {% if result.dois %}
+                {% for doi in result.dois %}
+                  {{ doi.doi }}
+                  {% if not loop.last %}, {% endif %}
+                {% endfor %}
+              {% else %}
+                No related DOIs
+              {% endif %}
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="3">No results found.</td>
+          </tr>
+        {% endfor %}
           </tbody>
       </table>
   </div>

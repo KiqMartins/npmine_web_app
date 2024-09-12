@@ -170,16 +170,27 @@ def fetch_pubchem_data(inchikey):
 def editCompound(id):
     return render_template('editCompound.html')
 
+@compounds.route('/search_menu')
+def search_menu():
+    return render_template('search_menu.html')
+
 @compounds.route('/search')
 def search():
     logged_in = current_user.is_authenticated
     q = request.args.get("q")
 
     if q:
-        results = Compounds.query.filter(
-            Compounds.compound_name.ilike(f"%{q}%") | 
-            Compounds.smiles.ilike(f"%{q}%") | Compounds.inchi_key.ilike(f"%{q}%")
-        ).order_by(Compounds.compound_name.asc()).limit(100).all()
+        results = Compounds.query \
+            .outerjoin(Compounds.dois) \
+            .filter(
+                Compounds.compound_name.ilike(f"%{q}%") |
+                Compounds.smiles.ilike(f"%{q}%") |
+                Compounds.inchi_key.ilike(f"%{q}%") |
+                DOI.doi.ilike(f"%{q}%")
+            ) \
+            .order_by(Compounds.compound_name.asc()) \
+            .limit(100) \
+            .all()
     else:
         results = []
 
@@ -187,3 +198,51 @@ def search():
         return render_template('search_results.html', results=results)
     
     return render_template('search.html', results=results, logged_in=logged_in)
+
+@compounds.route('/search_doi')
+def search_doi():
+    logged_in = current_user.is_authenticated
+    q = request.args.get("q")
+
+    if q:
+        results = DOI.query \
+            .filter(
+                DOI.doi.ilike(f"%{q}%")
+            ) \
+            .options(db.joinedload(DOI.compounds), db.joinedload(DOI.taxa)) \
+            .order_by(DOI.doi.asc()) \
+            .limit(100) \
+            .all()
+    else:
+        results = []
+
+    if request.headers.get('HX-Request') == 'true':
+        return render_template('search_results_doi.html', results=results)
+    
+    return render_template('search_doi.html', results=results, logged_in=logged_in)
+
+@compounds.route('/search_taxon')
+def search_taxon():
+    logged_in = current_user.is_authenticated
+    q = request.args.get("q")
+
+    if q:
+        # Perform the query with proper joins to load related data
+        results = Taxa.query \
+            .filter(Taxa.verbatim.ilike(f"%{q}%")) \
+            .options(
+                db.joinedload(Taxa.dois)
+                    .joinedload(DOI.compounds),
+                db.joinedload(Taxa.dois)  # Ensure DOIs are loaded
+            ) \
+            .order_by(Taxa.verbatim.asc()) \
+            .limit(100) \
+            .all()
+    else:
+        results = []
+
+    if request.headers.get('HX-Request') == 'true':
+        return render_template('search_results_taxon.html', results=results)
+    
+    return render_template('search_taxon.html', results=results, logged_in=logged_in)
+

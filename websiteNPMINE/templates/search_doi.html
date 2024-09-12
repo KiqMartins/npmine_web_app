@@ -111,7 +111,7 @@
         <div class="columns">
           <div class="column is-one-third is-offset-one-third">
             <input type="text" class="input" placeholder="Search" name="q"
-            hx-get="/search" 
+            hx-get="/search_doi" 
             hx-trigger="keyup changed delay:500ms"
             hx-target="#results" 
             hx-swap="innerHTML">
@@ -121,21 +121,46 @@
       <table class="table is-fullwidth">
           <thead>
               <tr>
-                  <th>Compound Name</th>
-                  <th>SMILES</th>
-                  <th>InChI Key</th>
-                  <th>DOIs</th>
+                  <th>DOI</th>
+                  <th>Related Compounds</th>
+                  <th>Related Taxa</th>
               </tr>
           </thead>
           <tbody id="results">
-              {% for result in results %}
-                  <tr>
-                      <td>{{ result.compound_name }}</td>
-                      <td>{{ result.smiles }}</td>
-                      <td>{{ result.inchi_key }}</td>
-                      <td>{{ result.dois }}</td>
-                  </tr>
-              {% endfor %}
+            {% for result in results %}
+        <tr>
+            <!-- Display the DOI -->
+            <td>{{ result.doi }}</td>
+
+            <!-- Display related Compounds -->
+            <td>
+                {% if result.compounds %}
+                    {% for compound in result.compounds %}
+                        {{ compound.compound_name }}
+                        {% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                    No related compounds
+                {% endif %}
+            </td>
+
+            <!-- Display related Taxa -->
+            <td>
+                {% if result.taxa %}
+                    {% for taxon in result.taxa %}
+                        {{ taxon.verbatim }}
+                        {% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                    No related taxa
+                {% endif %}
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="3">No results found.</td>
+        </tr>
+    {% endfor %}
           </tbody>
       </table>
   </div>
