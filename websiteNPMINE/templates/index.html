@@ -32,14 +32,14 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Documentation</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Search</a>
-          </li>
           {% if current_user.is_authenticated and current_user.role.name == 'admin' %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('users.admin_panel') }}">Control Panel</a>
-          </li>
-          {% endif %}
+            <li class="nav-item me-3"> <!-- Add margin end (right) -->
+                <a class="nav-link" href="{{ url_for('users.admin_panel') }}">Control Panel</a>
+            </li>
+             {% endif %} 
+             <li class="nav-item">
+              <a class="nav-link" href="/search_menu">Search</a>
+            </li>
         </ul>
       </div>
       {% if logged_in %}

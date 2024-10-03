@@ -8,6 +8,7 @@ from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm import aliased
 import collections
 
+
 main = Blueprint('main', __name__)
 
 @main.route('/')
@@ -92,12 +93,13 @@ def compound(compound_id):
 @main.route('/article/<int:article_id>')
 def article(article_id):
     logged_in = current_user.is_authenticated  # Check if the user is logged in
+    
     # Fetch article from the DOI table based on the article_id
     doi_record = DOI.query.get(article_id)
     if not doi_record:
         abort(404)
     
-     # Retrieve the compounds associated with the article
+    # Retrieve the compounds associated with the article
     compounds = doi_record.compounds
 
     if compounds:
@@ -110,30 +112,38 @@ def article(article_id):
         article_url = None
         created_at = None
 
-    # Retrieve related compound names
-    related_compound_names = set()
-    for doi_compound in compounds:
-        related_compounds = Compounds.query.join(doicomp).filter(doicomp.columns.doi_id == article_id).all()
-        for compound in related_compounds:
-            related_compound_names.add(compound.compound_name)
-    
-    cleaned_related_compound_names = [name for name in related_compound_names if name is not None]
+    # Gather related compound names, associated species (taxa), and other data
+    related_compound_names = []
+    compound_name_to_id_map = {}
+    verbatim_values = set()
 
-    # Retrieve compound IDs for the related compound names
-    compound_name_to_id_map = {}  # Create an empty dictionary
-    for compound_name in cleaned_related_compound_names:
-        compound = Compounds.query.filter_by(compound_name=compound_name).first()
-        if compound:
-            compound_name_to_id_map[compound_name] = compound.id
+    # Retrieve all taxa associated with the DOI
+    taxa_for_doi = Taxa.query.filter(Taxa.dois.any(id=article_id)).all()
+    taxa_verbatim_values = set(taxon.verbatim for taxon in taxa_for_doi)
 
-    # Retrieve matches in the taxa table based on the article_url
-    matching_taxa = Taxa.query.filter_by(article_url=article_url).all()
+    for compound in compounds:
+        compound_name = compound.compound_name
+        compound_id = compound.id
+        related_compound_names.append(compound_name)
+        compound_name_to_id_map[compound_name] = compound_id
 
-    # Retrieve the list of verbatim values associated with the matches
-    verbatim_values = [taxon.verbatim for taxon in matching_taxa]
+        # Collect species (taxa) associated with the DOI and compound
+        for taxon in taxa_for_doi:
+            if taxon in doi_record.taxa:
+                verbatim_values.add(taxon.verbatim)  # Use a set to avoid duplicates
 
-    # Pass the article to the template
-    return render_template('article.html', doi_record=doi_record, journal_name=journal_name, article_url=article_url, created_at=created_at, related_compound_names=cleaned_related_compound_names, logged_in=logged_in, verbatim_values=verbatim_values, compound_name_to_id_map=compound_name_to_id_map)
+    # Pass the article and related compounds to the template
+    return render_template('article.html', 
+                           doi_record=doi_record, 
+                           journal_name=journal_name, 
+                           article_url=article_url, 
+                           created_at=created_at, 
+                           related_compound_names=related_compound_names, 
+                           compound_name_to_id_map=compound_name_to_id_map, 
+                           verbatim_values=verbatim_values, 
+                           logged_in=logged_in)
+
+
 
 @main.route('/profile/<int:profile_id>')
 @login_required
@@ -173,57 +183,6 @@ def delete_compound(compound_id):
 
     return redirect(url_for('main.home'))
 
-
-@main.route('/search', methods=['GET'])
-def search():
-    query = request.args.get('q', '')
-    print(f"Query: {query}")
-
-    # Query Compounds, DOI, and Taxa
-    compounds = Compounds.query.filter(
-        or_(
-            Compounds.journal.ilike(f'%{query}%'),
-            Compounds.inchi_key.ilike(f'%{query}%'),
-            Compounds.article_url.ilike(f'%{query}%')  # Add article_url search criteria
-        )
-    ).all()
-
-    taxa = Taxa.query.filter(
-        or_(
-            Taxa.verbatim.ilike(f'%{query}%'),
-            Taxa.article_url.ilike(f'%{query}%')  # Add article_url search criteria
-        )
-    ).all()
-
-    # Initialize defaultdicts to store related compounds and taxa
-    related_compounds = collections.defaultdict(list)
-    related_taxa = collections.defaultdict(list)
-
-    # Query DOI
-    dois = DOI.query.filter(DOI.doi.ilike(f'%{query}%')).all()
-
-    # Query related compounds and taxa based on DOI
-    for doi in dois:
-        # Create aliases for the association tables
-        doicomp_alias = aliased(doicomp)
-        doitaxa_alias = aliased(doitaxa)
-        
-        # Query related compounds
-        compound_query = Compounds.query.join(doicomp_alias).filter(doicomp_alias.c.doi_id == doi.id)
-        related_compounds[doi.id].extend(compound_query.all())
-
-        # Query related taxa
-        taxa_query = Taxa.query.join(doitaxa_alias).filter(doitaxa_alias.c.doi_id == doi.id)
-        related_taxa[doi.id].extend(taxa_query.all())
-
-    return render_template(
-        'search_results.html',
-        compounds=compounds,
-        taxa=taxa,
-        related_compounds=related_compounds,
-        related_taxa=related_taxa,
-        query=query
-    )
 
 @main.route('/toggle_privacy/<int:compound_id>', methods=['POST'])
 @login_required

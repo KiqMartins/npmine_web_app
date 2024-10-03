@@ -1,0 +1,34 @@
+{% for result in results %}
+    <tr>
+        <!-- Display the DOI -->
+        <td>{{ result.doi }}</td>
+
+        <!-- Display related Compounds (compound_name only) -->
+        <td>
+            {% if result.compounds %}
+                {% for compound in result.compounds %}
+                    {{ compound.compound_name }}
+                    {% if not loop.last %}, {% endif %}
+                {% endfor %}
+            {% else %}
+                No related compounds
+            {% endif %}
+        </td>
+
+        <!-- Display related Taxa (verbatim only) -->
+        <td>
+            {% if result.taxa %}
+                {% for taxon in result.taxa %}
+                    {{ taxon.verbatim }}
+                    {% if not loop.last %}, {% endif %}
+                {% endfor %}
+            {% else %}
+                No related taxa
+            {% endif %}
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="3">No results found.</td>
+    </tr>
+{% endfor %}

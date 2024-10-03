@@ -3,6 +3,8 @@ from flask_login import UserMixin
 from itsdangerous import TimedSerializer as Serializer
 from flask import current_app
 from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -62,11 +64,11 @@ class Compounds(db.Model):
     article_url = db.Column(db.String(500))
     inchi_key = db.Column(db.String(5000))
     exact_molecular_weight = db.Column(db.Float)
-    class_results = db.Column(db.String(50))
-    superclass_results = db.Column(db.String(50))
-    pathway_results = db.Column(db.String(50))
-    isglycoside = db.Column(db.String(50))
-    pubchem_id = db.Column(db.String(50))
+    class_results = db.Column(db.String(5000))
+    superclass_results = db.Column(db.String(5000))
+    pathway_results = db.Column(db.String(5000))
+    isglycoside = db.Column(db.String(5000))
+    pubchem_id = db.Column(db.String(5000))
     inchi = db.Column(db.String(5000))
     source = db.Column(db.String(10))
     user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))

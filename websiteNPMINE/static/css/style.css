@@ -77,6 +77,10 @@ div {
   transform: translateX(-50%);
 }
 
+.navbar-brand-centered img {
+  height: 60px; /* Match the height of the image */
+}
+
 /* CSS to align navbar links to right when toggler is active on small screens */
 @media (max-width: 576px) {
   .navbar-nav {
