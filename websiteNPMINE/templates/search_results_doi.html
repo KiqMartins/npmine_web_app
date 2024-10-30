@@ -1,7 +1,7 @@
 {% for result in results %}
     <tr>
         <!-- Display the DOI -->
-        <td>{{ result.doi }}</td>
+        <td><a href="{{ result.doi }}" target="_blank">{{ result.doi }}</a></td>
 
         <!-- Display related Compounds (compound_name only) -->
         <td>

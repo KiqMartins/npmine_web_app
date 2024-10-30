@@ -29,6 +29,9 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Downloads</a>
           </li>
+          <li class="nav-item"></li>
+            <a class="nav-link" href="https://github.com/computational-chemical-biology/npmine_web_app/issues">Issues and Corrections</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Documentation</a>
           </li>
@@ -36,8 +39,8 @@
             <li class="nav-item me-3"> <!-- Add margin end (right) -->
                 <a class="nav-link" href="{{ url_for('users.admin_panel') }}">Control Panel</a>
             </li>
-            {% endif %}
-            <li class="nav-item">
+             {% endif %} 
+             <li class="nav-item">
               <a class="nav-link" href="/search_menu">Search</a>
             </li>
         </ul>
@@ -55,44 +58,54 @@
   </nav>
 </div>
   </nav>    
-  <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
+  <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel" data-bs-interval="10000">
     <div class="carousel-indicators">
       <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
       <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
       <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
     </div>
     <div class="carousel-inner">
-      <div class="carousel-item active">
-        <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="400" fill="var(--bs-secondary-color)"/></svg>
+      <!-- Second page content moved to first carousel item -->
+      <div class="carousel-item active" data-bs-interval="10000">
+        <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
+          <rect width="100%" height="400" fill="var(--bs-secondary-color)"/>
+        </svg>
         <div class="container">
           <div class="carousel-caption text-start">
-            <h1>Example headline.</h1>
-            <p class="opacity-75">Some representative placeholder content for the first slide of the carousel.</p>
+            <h1>Add natural products and other compounds</h1>
+            <p>Choose what compounds are public and which are private!</p>
           </div>
         </div>
       </div>
-      <div class="carousel-item">
-        <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="400" fill="var(--bs-secondary-color)"/></svg>
+  
+      <div class="carousel-item" data-bs-interval="10000">
+        <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
+          <rect width="100%" height="400" fill="var(--bs-secondary-color)"/>
+        </svg>
         <div class="container">
           <div class="carousel-caption">
-            <h1>Another example headline.</h1>
-            <p>Some representative placeholder content for the second slide of the carousel.</p>
+            <a href="{{ url_for('users.sign_up') }}" class="carousel-link">
+              <h1>Click here to sign up!</h1>
+            </a>
+            <p class="opacity-75">Search compounds of interest by DOI, Compound Name, Structure, and Taxa</p>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-      </div>
-      <div class="carousel-item">
-        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
+  
+      <!-- The third carousel item remains unchanged -->
+      <div class="carousel-item" data-bs-interval="10000">
+        <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
+          <rect width="100%" height="400" fill="var(--bs-secondary-color)"/>
+        </svg>
         <div class="container">
           <div class="carousel-caption text-end">
-            <h1>One more for good measure.</h1>
-            <p>Some representative placeholder content for the third slide of this carousel.</p>
+            <h1>You can also make your own database locally!</h1>
+            <p>Check out our documentation for more information</p>
           </div>
         </div>
       </div>
     </div>
+  
     <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
       <span class="visually-hidden">Previous</span>
@@ -101,6 +114,8 @@
       <span class="carousel-control-next-icon" aria-hidden="true"></span>
       <span class="visually-hidden">Next</span>
     </button>
+  </div>
+  </div>
         <div class="container d-flex justify-content-center align-items-center" style="height: 300px;">
             <div>
               <a href="{{ url_for('compounds.search') }}">
@@ -112,7 +127,7 @@
               <a href="{{ url_for('compounds.search_taxon') }}">
                 <button type="button" class="btn btn-outline-dark mx-2">Search by Taxa</button>
               </a>
-              <a href="#"></a>
+              <a href="{{ url_for('compounds.search_structure') }}">
                 <button type="button" class="btn btn-outline-dark mx-2">Search by Structure</button>
               </a>
             </div>

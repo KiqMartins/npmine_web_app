@@ -3,7 +3,11 @@
         <td>{{ result.compound_name }}</td>
         <td>{{ result.smiles }}</td>
         <td>{{ result.inchi_key }}</td>
-        <td>{{ result.dois }}</td>
+        <td>
+            {% for doi in result.dois %}
+                <a href="{{ doi.doi }}" target="_blank">{{ doi.doi }}</a>{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </td>
     </tr>
 {% else %}
     <tr>

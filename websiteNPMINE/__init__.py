@@ -7,14 +7,18 @@ from websiteNPMINE.config import Config
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap4
+from flask_mail import Mail
+from flask_wtf.csrf import CSRFProtect
 
 db = SQLAlchemy()
-
+migrate = Migrate()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
 login_manager.login_view = 'main.home'
 login_manager.login_message_category = 'info'
 bootstrap = Bootstrap4()
+mail = Mail()
+csrf = CSRFProtect()
 
 
 def create_app(config_class=Config):
@@ -23,6 +27,8 @@ def create_app(config_class=Config):
     bcrypt.init_app(app)
     db.init_app(app)
     bootstrap.init_app(app)
+    mail.init_app(app)
+    csrf.init_app(app)
 
     login_manager.init_app(app)
 
@@ -33,7 +39,7 @@ def create_app(config_class=Config):
     app.register_blueprint(main)
     app.register_blueprint(compounds)
 
-    migrate = Migrate(app,db)
+    migrate.init_app(app, db)
 
 
     return app

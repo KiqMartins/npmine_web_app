@@ -7,7 +7,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm import aliased
 import collections
-
+from websiteNPMINE import csrf
 
 main = Blueprint('main', __name__)
 
@@ -161,7 +161,9 @@ def profile(profile_id):
     # Pass the public and private compounds to the template
     return render_template('profile.html', logged_in=logged_in, user=user, public_compounds=public_compounds, private_compounds=private_compounds)
 
+
 @main.route('/compound/<int:compound_id>/delete', methods=['POST'])
+@csrf.exempt
 @login_required
 def delete_compound(compound_id):
     # Find the compound to delete
@@ -185,6 +187,7 @@ def delete_compound(compound_id):
 
 
 @main.route('/toggle_privacy/<int:compound_id>', methods=['POST'])
+@csrf.exempt
 @login_required
 def toggle_privacy(compound_id):
     compound = Compounds.query.get_or_404(compound_id)

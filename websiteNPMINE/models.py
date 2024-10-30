@@ -1,10 +1,13 @@
 from . import db, login_manager
 from flask_login import UserMixin
-from itsdangerous import TimedSerializer as Serializer
+from itsdangerous import URLSafeTimedSerializer as Serializer
 from flask import current_app
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 
+admin_role_id = 1
+editor_role_id = 2
+user_role_id = 3
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -22,15 +25,14 @@ class Accounts(db.Model, UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
-
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False, default=2)  # Set default to "editor"
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False, default=user_role_id)  
     role = db.relationship('Role', backref=db.backref('accounts', lazy='dynamic'))
     
     def get_reset_token(self, expires_sec=1800):
-        s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'user_id': self.id}).decode('utf-8')
+        s = Serializer(current_app.config['SECRET_KEY'])
+        return s.dumps({'user_id': self.id})
 
     @staticmethod
     def verify_reset_token(token):
@@ -44,12 +46,31 @@ class Accounts(db.Model, UserMixin):
     def __repr__(self):
         return f"User('{self.username}', '{self.email}')"
 
+# Association tables with delete cascade
+doicomp = db.Table(
+    'doicomp',
+    db.Column('doi_id', db.Integer, db.ForeignKey('doi.id', ondelete="CASCADE"), primary_key=True),
+    db.Column('compound_id', db.Integer, db.ForeignKey('compounds.id', ondelete="CASCADE"), primary_key=True)
+)
+
+doitaxa = db.Table(
+    'doitaxa',
+    db.Column('doi_id', db.Integer, db.ForeignKey('doi.id', ondelete="CASCADE"), primary_key=True),
+    db.Column('taxon_id', db.Integer, db.ForeignKey('taxa.id', ondelete="CASCADE"), primary_key=True)
+)
+
 class DOI(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     doi = db.Column(db.String(150), unique=True)
 
-    compounds = db.relationship('Compounds', secondary='doicomp', back_populates='dois')
-    taxa = db.relationship('Taxa', secondary='doitaxa', back_populates='dois')
+    compounds = db.relationship('Compounds', 
+                                secondary=doicomp, 
+                                back_populates='dois', 
+                                cascade="all, delete")
+    taxa = db.relationship('Taxa', 
+                           secondary=doitaxa, 
+                           back_populates='dois', 
+                           cascade="all, delete")
 
     def __repr__(self):
         return f'<DOI: {self.doi}>'
@@ -59,7 +80,6 @@ class Compounds(db.Model):
     journal = db.Column(db.String(5000))
     compound_name = db.Column(db.String(5000))
     compound_image = db.Column(db.String(5000))
-    dois = db.relationship('DOI', secondary='doicomp', back_populates='compounds')
     smiles = db.Column(db.String(5000))
     article_url = db.Column(db.String(500))
     inchi_key = db.Column(db.String(5000))
@@ -73,11 +93,13 @@ class Compounds(db.Model):
     source = db.Column(db.String(10))
     user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
     status = db.Column(db.String(10), nullable=False, default='private')
-    
-    # Add created_at field to track compound creation date
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     
     account = db.relationship("Accounts", backref="compounds")
+    dois = db.relationship('DOI', 
+                           secondary=doicomp, 
+                           back_populates='compounds', 
+                           cascade="all, delete")
 
     def __repr__(self):
         return f'Compounds: {self.id}'
@@ -103,36 +125,24 @@ class Compounds(db.Model):
             'isglycoside': self.isglycoside,
         }
 
-
 class Taxa(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     article_url = db.Column(db.String(5000))
     verbatim = db.Column(db.String(5000))
     odds = db.Column(db.Float)
-    dois = db.relationship('DOI', secondary='doitaxa', back_populates='taxa')
     datasourceid = db.Column(db.String(5000))
     taxonid = db.Column(db.Integer)
     classificationpath = db.Column(db.String(5000))
     classificationrank = db.Column(db.String(5000))
     matchtype = db.Column(db.String(50))
     user_id = db.Column(db.Integer, db.ForeignKey('accounts.id'))
-    
-    # Add created_at field to track taxon creation date
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     
     account = db.relationship("Accounts", backref="taxons")
+    dois = db.relationship('DOI', 
+                           secondary=doitaxa, 
+                           back_populates='taxa', 
+                           cascade="all, delete")
 
     def __repr__(self):
         return f'<Taxa: {self.verbatim}, {self.article_url}, {self.classificationpath}, {self.classificationrank}, {self.user_id}>'
-
-doicomp = db.Table(
-    'doicomp',
-    db.Column('doi_id', db.Integer, db.ForeignKey('doi.id'), primary_key=True),
-    db.Column('compound_id', db.Integer, db.ForeignKey('compounds.id'), primary_key=True)
-)
-
-doitaxa = db.Table(
-    'doitaxa',
-    db.Column('doi_id', db.Integer, db.ForeignKey('doi.id'), primary_key=True),
-    db.Column('taxon_id', db.Integer, db.ForeignKey('taxa.id'), primary_key=True)
-)

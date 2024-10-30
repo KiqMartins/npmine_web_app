@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from websiteNPMINE.models import Accounts, Role
 from werkzeug.security import generate_password_hash, check_password_hash
-from websiteNPMINE import db, bcrypt
+from websiteNPMINE import db, bcrypt, mail
 from flask_login import login_user, login_required, logout_user, current_user
-from .forms import RegistrationForm, LoginForm
-
+from .forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetForm
+from flask_mail import Message
 
 users = Blueprint('users', __name__)
 
@@ -39,20 +39,15 @@ def sign_up():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        
-        # You can set the default role_id for new users here (1 for User, 2 for Editor, 3 for Admin)
-        # Change the value according to your needs
-        default_role_id = 3  # For example, setting the default role to User
-        
+        default_role_id = 3  
         user = Accounts(
             username=form.username.data,
             email=form.email.data,
             password=hashed_password,
-            role_id=default_role_id  # Set the default role_id
+            role_id=default_role_id  
         )
         db.session.add(user)
         db.session.commit()
-        
         flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('users.login'))
     return render_template('signup.html', title='Register', form=form, user=current_user)
@@ -86,3 +81,42 @@ def admin_panel():
 
     return render_template('admin_panel.html', users=users, roles=roles, logged_in=current_user.is_authenticated)
 
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message("Password Reset Request", 
+                  sender='noreply@demo.com', 
+                  recipients=[user.email])
+    msg.body = f"""To reset your password, visit the following link:
+{url_for('users.reset_token', token=token, _external=True)}
+
+If you did not make this request then simply ignore this email and no changes will be made."""
+    mail.send(msg)
+
+@users.route('/reset_password', methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = Accounts.query.filter_by(email=form.email.data).first()
+        send_reset_email(user)
+        flash('An email has been sent with instructions to reset your password.', 'info')
+        return redirect(url_for('users.login'))
+    return render_template('reset_request.html', title='Reset Password', form=form)
+
+@users.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    user = Accounts.verify_reset_token(token)
+    if user is None:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect(url_for('reset_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        flash('Your password has been updated! You are now able to login', 'success')
+        return redirect(url_for('users.login'))
+    return render_template('reset_token.html', title='Reset Password', form=form)
