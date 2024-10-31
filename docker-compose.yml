@@ -1,24 +1,32 @@
-version: "3"
 services:
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "5000:5000"
-    env_file:
-      - .env
-    depends_on:
-      - db
-
   db:
     image: postgres:13
-    restart: always
-    ports:
-      - "5433:5432"
-    env_file:
-      - .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - ./data:/var/lib/postgresql/data
-    command: bash -c "while ! pg_isready -h db -p 5433 -U $POSTGRES_USER; do sleep 1; done && sleep 5 && /app/init_db.sh"
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432" 
 
+  web:
+    build: .
+    environment:
+      FLASK_ENV: production
+      SQLALCHEMY_DATABASE_URI: postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}  
+      SECRET_KEY: ${SECRET_KEY}
+      SQLALCHEMY_TRACK_MODIFICATIONS: ${SQLALCHEMY_TRACK_MODIFICATIONS}
+      TEMP_FOLDER: ${TEMP_FOLDER}  
+      MAIL_SERVER: ${MAIL_SERVER}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USE_TLS: ${MAIL_USE_TLS}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+
+volumes:
+  postgres_data:

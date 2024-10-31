@@ -22,7 +22,7 @@
             <td>
               {% if result.dois %}
                 {% for doi in result.dois %}
-                  {{ doi.doi }}
+                <a href="{{ doi.doi }}" target="_blank">{{ doi.doi }}</a>
                   {% if not loop.last %}, {% endif %}
                 {% endfor %}
               {% else %}
