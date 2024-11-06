@@ -182,10 +182,11 @@ def search():
         results = Compounds.query \
             .outerjoin(Compounds.dois) \
             .filter(
-                Compounds.compound_name.ilike(f"%{q}%") |
+                (Compounds.compound_name.ilike(f"%{q}%") |
                 Compounds.smiles.ilike(f"%{q}%") |
                 Compounds.inchi_key.ilike(f"%{q}%") |
-                DOI.doi.ilike(f"%{q}%")
+                DOI.doi.ilike(f"%{q}%")) &
+                (Compounds.status == 'public')  # Only show Public compounds
             ) \
             .order_by(Compounds.compound_name.asc()) \
             .limit(100) \
@@ -205,10 +206,21 @@ def search_doi():
     q = request.args.get("q")
 
     if q:
-        # Use a unique identifier (e.g., DOI.id) to prevent duplicates
-        results = DOI.query.filter(DOI.doi.ilike(f"%{q}%")).distinct().options(
-            db.joinedload(DOI.compounds), db.joinedload(DOI.taxa)
-        ).order_by(DOI.doi.asc()).limit(100).all()
+        # Perform a query on the DOI model, joining with the Compounds model
+        results = (
+            DOI.query
+            .join(DOI.compounds)  # Join DOI with Compounds through the relationship
+            .filter(Compounds.status == 'public')  # Filter for public compounds only
+            .filter(DOI.doi.ilike(f"%{q}%"))
+            .distinct()
+            .options(
+                db.joinedload(DOI.compounds),
+                db.joinedload(DOI.taxa)
+            )
+            .order_by(DOI.doi.asc())
+            .limit(100)
+            .all()
+        )
     else:
         results = []
 
@@ -224,11 +236,22 @@ def search_taxon():
     q = request.args.get("q")
 
     if q:
-        # Use a unique identifier (e.g., Taxa.id) to prevent duplicates
-        results = Taxa.query.filter(Taxa.verbatim.ilike(f"%{q}%")).distinct().options(
-            db.joinedload(Taxa.dois).joinedload(DOI.compounds),
-            db.joinedload(Taxa.dois)
-        ).order_by(Taxa.verbatim.asc()).limit(100).all()
+        # Query for Taxa associated with DOIs that have public compounds
+        results = (
+            Taxa.query
+            .join(Taxa.dois)  # Join Taxa with DOI through the relationship
+            .join(DOI.compounds)  # Join DOI with Compounds to access status
+            .filter(Compounds.status == 'public')  # Filter to only public compounds
+            .filter(Taxa.verbatim.ilike(f"%{q}%"))
+            .distinct()
+            .options(
+                db.joinedload(Taxa.dois).joinedload(DOI.compounds),
+                db.joinedload(Taxa.dois)
+            )
+            .order_by(Taxa.verbatim.asc())
+            .limit(100)
+            .all()
+        )
     else:
         results = []
 
@@ -273,7 +296,8 @@ def search_structure():
     if request.method == 'GET':
         return render_template('search_structure.html')
 
-    cpds = db.session.query(Compounds).all()  # Retrieve all compounds from the database
+    # Retrieve only public compounds from the database
+    cpds = db.session.query(Compounds).filter(Compounds.status == 'public').all()
     search_res = []
     query = None
 
@@ -425,6 +449,8 @@ def edit_compound(id):
         print("Form validation errors:", form.errors)
 
     return render_template('editCompound.html', form=form, compound=compound, related_taxa=related_taxa, logged_in=logged_in)
+
+
 
 
 
