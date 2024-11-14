@@ -5,6 +5,7 @@ from websiteNPMINE import db, bcrypt, mail
 from flask_login import login_user, login_required, logout_user, current_user
 from .forms import RegistrationForm, LoginForm, ResetPasswordForm, RequestResetForm
 from flask_mail import Message
+from websiteNPMINE import csrf
 
 users = Blueprint('users', __name__)
 
@@ -53,6 +54,7 @@ def sign_up():
     return render_template('signup.html', title='Register', form=form, user=current_user)
 
 @users.route('/admin_panel', methods=['GET', 'POST'])
+@csrf.exempt
 @login_required
 def admin_panel():
     print("Current user:", current_user)  # Check if the current user object is loaded

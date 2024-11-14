@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
-{% block title %}NPMINE | New Compound{% endblock %}
+{% from 'macros.html' import add_checkpoint, chemdraw, error_message, warning_message %}
+{% block title %}NPMINE | Edit Compound{% endblock %}
 {% block newcompoundcontent %}
 <div class="container">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -32,7 +33,7 @@
               <a class="nav-link" href="https://github.com/computational-chemical-biology/npmine_web_app/issues">Issues and Corrections</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Documentation</a>
+              <a class="nav-link" href="https://github.com/computational-chemical-biology/npmine_web_app">Documentation</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/search_menu">Search</a>
@@ -115,101 +116,150 @@
       </button>
     </div>
     <div class="container">
-        <br>
-        <h2>Edit Compound: {{ compound.compound_name }}</h2>
-        <form method="POST" action="{{ url_for('compounds.edit_compound', id=compound.id) }}">
-            {{ form.hidden_tag() }}
-    
-            <div class="form-group">
-                {{ form.journal.label }} 
-                {{ form.journal(class="form-control") }}
-            </div>
-    
-            <div class="form-group">
-                {{ form.compound_name.label }} 
-                {{ form.compound_name(class="form-control") }}
-            </div>
-    
-            <div class="form-group">
-                {{ form.smiles.label }} 
-                {{ form.smiles(class="form-control") }}
-            </div>
-    
-            <div class="form-group">
-                {{ form.exact_molecular_weight.label }} 
-                {{ form.exact_molecular_weight(class="form-control") }}
-            </div>
-    
-            <div class="form-group">
-                {{ form.class_results.label }} 
-                {{ form.class_results(class="form-control") }}
-            </div>
-    
-            <div class="form-group">
-                {{ form.superclass_results.label }} 
-                {{ form.superclass_results(class="form-control") }}
-            </div>
-    
-            <div class="form-group">
-                {{ form.pathway_results.label }} 
-                {{ form.pathway_results(class="form-control") }}
-            </div>
-    
-            <div class="form-group">
-                {{ form.isglycoside.label }} 
-                {{ form.isglycoside(class="form-control") }}
-            </div>
-    
-            <div class="form-group">
-                {{ form.pubchem_id.label }} 
-                {{ form.pubchem_id(class="form-control") }}
-            </div>
-    
-            <div class="form-group">
-                {{ form.inchi.label }} 
-                {{ form.inchi(class="form-control") }}
-            </div>
-
-            <div class="form-group">
-                {{ form.inchi_key.label }} 
-                {{ form.inchi_key(class="form-control") }}
-            </div>
-    
-            <div class="form-group">
-                {{ form.article_url.label }} 
-                {{ form.article_url(class="form-control") }}
-            </div>
-    
-            <div class="form-group">
-                {{ form.status.label }} 
-                {{ form.status(class="form-control") }}
-            </div>
-    
-            <h3>DOIs</h3>
-            <div id="dois">
-                {% for doi_form in form.dois %}
-                    <div class="form-group">
-                        {{ doi_form.doi.label }}
-                        {{ doi_form.doi(class="form-control") }}
-                    </div>
-                {% endfor %}
-            </div>
-    
-            <h3>Taxa</h3>
-            <div id="taxa">
-                {% for taxon_form in form.taxa %}
-                    <div class="form-group">
-                        {{ taxon_form.verbatim.label }}
-                        {{ taxon_form.verbatim(class="form-control") }}
-                    </div>
-                {% endfor %}
-            </div>
-    
-            <div class="form-group">
-                {{ form.submit(class="btn btn-primary") }}
-            </div>
-        </form>
-    </div>
+      <br><br>
+      <h2>Edit Compound: {{ compound.compound_name }}</h2>
+  
+      <!-- Toggle buttons to switch between editing modes -->
+      <div class="container d-flex justify-content-center align-items-center">
+          <button id="manualBtn" class="btn btn-outline-dark mx-2" onclick="showManual()">Edit Manually</button>
+          <button id="editorBtn" class="btn btn-outline-dark mx-2" onclick="showEditor()">Edit with JSME Editor</button>
+      </div>
+  
+      <!-- Form for manual editing (hidden initially) -->
+      <div id="manualInput" style="display:none;">
+          <form method="POST" action="{{ url_for('compounds.edit_compound', id=compound.id) }}">
+              {{ form.hidden_tag() }}
+  
+              <!-- Additional fields for manual input -->
+              <div class="form-group">
+                  {{ form.journal.label }} 
+                  {{ form.journal(class="form-control") }}
+              </div>
+              <div class="form-group">
+                  {{ form.compound_name.label }} 
+                  {{ form.compound_name(class="form-control") }}
+              </div>
+              <div class="form-group">
+                  {{ form.smiles.label }} 
+                  {{ form.smiles(class="form-control") }}
+              </div>
+              <div class="form-group">
+                  {{ form.exact_molecular_weight.label }} 
+                  {{ form.exact_molecular_weight(class="form-control") }}
+              </div>
+              <div class="form-group">
+                  {{ form.class_results.label }} 
+                  {{ form.class_results(class="form-control") }}
+              </div>
+              <div class="form-group">
+                  {{ form.superclass_results.label }} 
+                  {{ form.superclass_results(class="form-control") }}
+              </div>
+              <div class="form-group">
+                  {{ form.pathway_results.label }} 
+                  {{ form.pathway_results(class="form-control") }}
+              </div>
+              <div class="form-group">
+                  {{ form.isglycoside.label }} 
+                  {{ form.isglycoside(class="form-control") }}
+              </div>
+              <div class="form-group">
+                  {{ form.pubchem_id.label }} 
+                  {{ form.pubchem_id(class="form-control") }}
+              </div>
+              <div class="form-group">
+                  {{ form.inchi.label }} 
+                  {{ form.inchi(class="form-control") }}
+              </div>
+              <div class="form-group">
+                  {{ form.inchi_key.label }} 
+                  {{ form.inchi_key(class="form-control") }}
+              </div>
+              <div class="form-group">
+                  {{ form.article_url.label }} 
+                  {{ form.article_url(class="form-control") }}
+              </div>
+              <div class="form-group">
+                  {{ form.status.label }} 
+                  {{ form.status(class="form-control") }}
+              </div>
+  
+              <!-- DOIs and Taxa sections -->
+              <h3>DOIs</h3>
+              <div id="dois">
+                  {% for doi_form in form.dois %}
+                      <div class="form-group">
+                          {{ doi_form.doi.label }}
+                          {{ doi_form.doi(class="form-control") }}
+                      </div>
+                  {% endfor %}
+              </div>
+              <h3>Taxa</h3>
+              <div id="taxa">
+                  {% for taxon_form in form.taxa %}
+                      <div class="form-group">
+                          {{ taxon_form.verbatim.label }}
+                          {{ taxon_form.verbatim(class="form-control") }}
+                      </div>
+                  {% endfor %}
+              </div>
+  
+              <div class="form-group">
+                  {{ form.submit(class="btn btn-primary") }}
+              </div>
+          </form>
+      </div>
+  
+      <!-- JSME editor for structure drawing (hidden initially) -->
+      <div id="jsmeEditor" style="display:none;">
+          <h3>Draw Structure</h3>
+          {{ chemdraw() }}
+          <button onclick="generateFromDrawing()">Generate Structure Data</button>
+  
+          <!-- Form fields for generated data -->
+          <form method="POST" action="{{ url_for('compounds.edit_compound', id=compound.id) }}">
+              {{ form.hidden_tag() }}
+              <div class="form-group">
+                  <label>SMILES</label>
+                  <input type="text" id="generatedSMILES" name="smiles" readonly class="form-control">
+              </div>
+              <div class="form-group">
+                  <label>InChI Key</label>
+                  <input type="text" id="generatedInchiKey" name="inchi_key" readonly class="form-control">
+              </div>
+              <div class="form-group">
+                  <label>Exact Molecular Weight</label>
+                  <input type="text" id="generatedWeight" name="exact_molecular_weight" readonly class="form-control">
+              </div>
+              {{ form.submit(class="btn btn-primary") }}
+          </form>
+      </div>
+  </div>
+  
+  <script>
+      function showManual() {
+          document.getElementById('jsmeEditor').style.display = 'none';
+          document.getElementById('manualInput').style.display = 'block';
+      }
+      
+      function showEditor() {
+          document.getElementById('manualInput').style.display = 'none';
+          document.getElementById('jsmeEditor').style.display = 'block';
+      }
+  
+      function generateFromDrawing() {
+          // Replace these with actual calls to the JSME API
+          const smiles = getSMILESFromJSME();
+          const inchiKey = getInChIKeyFromJSME();
+          const molecularWeight = calculateWeight(smiles);
+  
+          document.getElementById('generatedSMILES').value = smiles;
+          document.getElementById('generatedInchiKey').value = inchiKey;
+          document.getElementById('generatedWeight').value = molecularWeight;
+      }
+  </script>
+<br>
+<br>
     <section class="page-section" id="about">
         <div class="container">
             <h2 class="page-section-heading text-center text-uppercase mb-0" style="color: #000000"><b>About NPMINE</b></h2>
