@@ -43,7 +43,7 @@ NPMINE_WEB_APP_EMAIL=<>
 **1.** Access URL link: <>
 
 
-## USAGE
+## FUNCTIONALITIES
 
 ### SIGNUP
 
@@ -51,6 +51,32 @@ NPMINE_WEB_APP_EMAIL=<>
 
 ### DEPOSITING COMPOUNDS
 
+You can deposit compounds and it will be private as default.
+
+![deposit](./images/deposit.gif)
+
+### CHECKING OUT DEPOSITED COMPOUNDS
+
+Once you've created an account, your profile page will show the public/private compounds you've deposited.
+
+![profile](./images/profile.gif)
+
+### SEARCHING
+
+You can search by compound, DOI, taxa and structure of compounds.
+
+![search](./images/search.gif)
+
 ### ADMINS AND EDITORS: EDITING COMPOUNDS
 
+![edit](./images/edit.gif)
+
 ### ADMINS AND EDITORS: DELETING COMPOUNDS
+
+![delete](./images/delete.gif)
+
+### ADMINS AND EDITORS: CONTROL PANEL
+
+Admins can control the access of other users.
+
+![controlpanel](./images/controlpanel.gif)
