@@ -3,7 +3,7 @@
 
 NPMINE Online Database was created as an extension of [NPMINE](https://github.com/computational-chemical-biology/npmine) and, therefore, stores chemical and phylogenetic information from scientific literature. Users can also use NPMINE Online Database as an online management system, choosing whether the information deposited remains public or private. Although initially developed as a companion to NPMINE, NPMINE Online Database can be used apart from it with users being able to insert information manually from any source of scientific literature and, although initially having a focus on natural products, any compound can be deposited. Optionally, users can use NPMINE Online Database with Docker.
 
----
+
 ## Installation
 
 ### OPTION 1: RUN LOCALLY USING DOCKER
@@ -39,6 +39,18 @@ NPMINE_WEB_APP_EMAIL=<>
 
 ### OPTION 2: USE ONLINE
 
+
 **1.** Access URL link: <>
----
+
+
 ## USAGE
+
+### SIGNUP
+
+![signup](./images/signup.gif)
+
+### DEPOSITING COMPOUNDS
+
+### ADMINS AND EDITORS: EDITING COMPOUNDS
+
+### ADMINS AND EDITORS: DELETING COMPOUNDS
