@@ -75,7 +75,7 @@ You can search by compound, DOI, taxa and structure of compounds.
 
 ![delete](./images/delete.gif)
 
-### ADMINS AND EDITORS: CONTROL PANEL
+### ADMINS: CONTROL PANEL
 
 Admins can control the access of other users.
 

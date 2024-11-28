@@ -161,6 +161,29 @@ def profile(profile_id):
     # Pass the public and private compounds to the template
     return render_template('profile.html', logged_in=logged_in, user=user, public_compounds=public_compounds, private_compounds=private_compounds)
 
+def delete_compound_and_related(compound):
+    """
+    Deletes a compound and its related entities based on these conditions:
+      - A DOI is deleted only if it is associated with this compound alone.
+      - A Taxon is deleted only if it is uniquely associated with the DOI being deleted.
+    """
+    # Process each DOI related to the compound
+    for doi in compound.dois:
+        # Check if this DOI is associated with only this compound
+        if len(doi.compounds) == 1:
+            # If no other compounds are associated with the DOI, delete related taxa
+            for taxon in doi.taxa:
+                # Check if the Taxon is uniquely associated with the DOI
+                taxon_related_compounds = sum(
+                    len(d.compounds) for d in taxon.dois if d != doi
+                )
+                if taxon_related_compounds == 0:
+                    db.session.delete(taxon)
+
+            db.session.delete(doi)
+
+    # Finally, delete the compound itself
+    db.session.delete(compound)
 
 @main.route('/compound/<int:compound_id>/delete', methods=['POST'])
 @csrf.exempt
@@ -175,13 +198,13 @@ def delete_compound(compound_id):
         return redirect(url_for('main.home'))
 
     try:
-        # Delete the compound from the database
-        db.session.delete(compound)
+        # Delete the compound and its related entities
+        delete_compound_and_related(compound)
         db.session.commit()
         flash("Compound deleted successfully.", "success")
     except Exception as e:
         db.session.rollback()
-        flash("An error occurred while deleting the compound.", "error")
+        flash(f"An error occurred while deleting the compound: {str(e)}", "error")
 
     return redirect(url_for('main.home'))
 
