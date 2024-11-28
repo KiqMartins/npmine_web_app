@@ -65,12 +65,10 @@ class DOI(db.Model):
 
     compounds = db.relationship('Compounds', 
                                 secondary=doicomp, 
-                                back_populates='dois', 
-                                cascade="all, delete")
+                                back_populates='dois')
     taxa = db.relationship('Taxa', 
                            secondary=doitaxa, 
-                           back_populates='dois', 
-                           cascade="all, delete")
+                           back_populates='dois')
 
     def __repr__(self):
         return f'<DOI: {self.doi}>'
@@ -98,8 +96,7 @@ class Compounds(db.Model):
     account = db.relationship("Accounts", backref="compounds")
     dois = db.relationship('DOI', 
                            secondary=doicomp, 
-                           back_populates='compounds', 
-                           cascade="all, delete")
+                           back_populates='compounds')
 
     def __repr__(self):
         return f'Compounds: {self.id}'
@@ -141,8 +138,7 @@ class Taxa(db.Model):
     account = db.relationship("Accounts", backref="taxons")
     dois = db.relationship('DOI', 
                            secondary=doitaxa, 
-                           back_populates='taxa', 
-                           cascade="all, delete")
+                           back_populates='taxa')
 
     def __repr__(self):
         return f'<Taxa: {self.verbatim}, {self.article_url}, {self.classificationpath}, {self.classificationrank}, {self.user_id}>'

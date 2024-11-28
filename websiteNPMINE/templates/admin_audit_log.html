@@ -118,94 +118,41 @@
   </div>
 </div>
 <div>
-  
-    <div class="container">
-      <br><br>
-      <h2>Edit Compound: {{ compound.compound_name }}</h2>
-      <br>
-      <div class="container d-flex justify-content-center align-items-center">
-          <button id="manualBtn" class="btn btn-outline-dark mx-2" onclick="showManual()">Edit Manually</button>
-          <button id="editorBtn" class="btn btn-outline-dark mx-2" onclick="showEditor()">Edit SMILES with JSME Editor</button>
-      </div>
-
-      <!-- Form for manual editing (hidden initially) -->
-      <div id="manualInput" style="display:none;">
-          <form method="POST" action="{{ url_for('compounds.edit_compound', id=compound.id) }}">
-              {{ form.hidden_tag() }}
-
-              <div class="form-group">{{ form.journal.label }} {{ form.journal(class="form-control") }}</div>
-              <div class="form-group">{{ form.compound_name.label }} {{ form.compound_name(class="form-control") }}</div>
-              <div class="form-group">{{ form.smiles.label }} {{ form.smiles(class="form-control") }}</div>
-              <div class="form-group">{{ form.class_results.label }} {{ form.class_results(class="form-control") }}</div>
-              <div class="form-group">{{ form.superclass_results.label }} {{ form.superclass_results(class="form-control") }}</div>
-              <div class="form-group">{{ form.pathway_results.label }} {{ form.pathway_results(class="form-control") }}</div>
-              <div class="form-group">{{ form.isglycoside.label }} {{ form.isglycoside(class="form-control") }}</div>
-              <div class="form-group">{{ form.pubchem_id.label }} {{ form.pubchem_id(class="form-control") }}</div>
-              <div class="form-group">{{ form.article_url.label }} {{ form.article_url(class="form-control") }}</div>
-              <div class="form-group">{{ form.status.label }} {{ form.status(class="form-control") }}</div>
-
-              <!-- DOIs Section -->
-              <h3>DOIs</h3>
-              <div id="dois">
-                  {% for doi_form in form.dois %}
-                      <div class="form-group">{{ doi_form.doi.label }} {{ doi_form.doi(class="form-control") }}</div>
-                  {% endfor %}
-              </div>
-
-              <!-- Taxa Section -->
-              <h3>Taxa</h3>
-              <div id="taxa">
-                  {% for taxon_form in form.taxa %}
-                      <div class="form-group">{{ taxon_form.verbatim.label }} {{ taxon_form.verbatim(class="form-control") }}</div>
-                  {% endfor %}
-              </div>
-
-              <div class="form-group">{{ form.submit(class="btn btn-primary") }}</div>
-          </form>
-      </div>
-
-      <!-- JSME editor for structure drawing (hidden initially) -->
-      <div id="jsmeEditor" style="display:none;">
-          <h3>Draw Structure</h3>
-          {{ chemdraw() }}
-          <br>
-          <button id="convertToSmiles" type="button" class="btn btn-outline-dark">Generate SMILES</button>
-          <br>
-          <br>
-          <form method="POST" action="{{ url_for('compounds.edit_compound', id=compound.id) }}">
-              {{ form.hidden_tag() }}
-              <div class="form-group"><label>SMILES</label><input type="text" id="drawSmilesInput" name="smiles" readonly class="form-control"></div>
-              {{ form.submit(class="btn btn-primary") }}
-          </form>
-      </div>
-  </div>
-
-  <script>
-      function showManual() {
-          document.getElementById('jsmeEditor').style.display = 'none';
-          document.getElementById('manualInput').style.display = 'block';
-      }
-      
-      function showEditor() {
-          document.getElementById('manualInput').style.display = 'none';
-          document.getElementById('jsmeEditor').style.display = 'block';
-      }
-
-      document.addEventListener('DOMContentLoaded', function () {
-          // Ensure the JSME applet is properly initialized before capturing SMILES
-          document.getElementById('convertToSmiles').addEventListener('click', function () {
-              var smiles = jsmeApplet.smiles(); // Assuming `jsmeApplet` is the JSME instance variable
-              if (smiles) {
-                  document.getElementById('drawSmilesInput').value = smiles;
-              } else {
-                  alert('Please draw a molecule first.');
-              }
-          });
-      });
-  </script>
-  <br><br>
-<br>
-<br>
+    <br>
+    <br>
+    <h1>Audit Logs</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Model</th>
+                <th>Record ID</th>
+                <th>Field</th>
+                <th>Old Value</th>
+                <th>New Value</th>
+                <th>Timestamp</th>
+                <th>User</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.model_name }}</td>
+                <td>{{ log.record_id }}</td>
+                <td>{{ log.field_name }}</td>
+                <td>{{ log.old_value }}</td>
+                <td>{{ log.new_value }}</td>
+                <td>{{ log.timestamp }}</td>
+                <td>{{ log.user.username }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7">No logs found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <br>
     <section class="page-section" id="about">
         <div class="container">
             <h2 class="page-section-heading text-center text-uppercase mb-0" style="color: #000000"><b>About NPMINE</b></h2>

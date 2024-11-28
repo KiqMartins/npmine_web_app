@@ -31,11 +31,13 @@ def save_compound_image(compound_id, smiles):
     # Define the full path to save the image
     full_path = os.path.join(current_app.root_path, 'static', relative_path)
 
+    # Ensure the directory exists
+    os.makedirs(os.path.dirname(full_path), exist_ok=True)
+
     # Check if the image already exists; if not, generate it
-    if not os.path.exists(full_path):
-        mol = Chem.MolFromSmiles(smiles)
-        img = Draw.MolToImage(mol, size=(200, 200))
-        img.save(full_path)
+    mol = Chem.MolFromSmiles(smiles)
+    img = Draw.MolToImage(mol, size=(200, 200))
+    img.save(full_path)
 
     # Return the relative path to be stored in the database
     return relative_path
@@ -396,6 +398,9 @@ def edit_compound(id):
         # Log form data to check what is being submitted
         print("Form data:", form.data)
 
+        # Store old SMILES for comparison
+        old_smiles = compound.smiles
+
         # Update compound fields with form data
         compound.journal = form.journal.data or compound.journal
         compound.compound_name = form.compound_name.data or compound.compound_name
@@ -419,7 +424,7 @@ def edit_compound(id):
         for existing_doi in compound.dois[:]:
             if existing_doi.doi in form_doi_data_list:
                 form_doi_entry = next(entry for entry in form.dois.entries if entry.data['doi'] == existing_doi.doi)
-                # Update attributes as needed, e.g., existing_doi.some_attribute = form_doi_entry.data.get('some_attribute', existing_doi.some_attribute)
+                # Update attributes as needed
             else:
                 compound.dois.remove(existing_doi)
                 db.session.delete(existing_doi)
@@ -431,6 +436,13 @@ def edit_compound(id):
                 new_doi = DOI(doi=form_doi_data['doi'])
                 compound.dois.append(new_doi)
                 db.session.add(new_doi)
+
+        # Check if SMILES changed and regenerate image if it did
+        if compound.smiles != old_smiles:
+            print("SMILES changed, updating image...")
+            # Regenerate the compound image
+            compound_image_path = save_compound_image(compound.id, compound.smiles)
+            compound.compound_image = compound_image_path  # Assuming the image path is stored in `compound_image` field
 
         # Commit changes to the database
         try:
