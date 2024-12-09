@@ -211,24 +211,25 @@ def search_doi():
     q = request.args.get("q")
 
     if q:
-        # Perform a query on the DOI model, joining with the Compounds model
+        # Query for DOIs with only public compounds
         results = (
             DOI.query
-            .join(DOI.compounds)  # Join DOI with Compounds through the relationship
-            .filter(Compounds.status == 'public')  # Filter for public compounds only
-            .filter(DOI.doi.ilike(f"%{q}%"))
+            .join(DOI.compounds)  # Join DOI with Compounds
+            .filter(Compounds.status == 'public')  # Ensure only public compounds are included
+            .filter(DOI.doi.ilike(f"%{q}%"))  # Filter by DOI search term
             .distinct()
             .options(
-                db.joinedload(DOI.compounds),
-                db.joinedload(DOI.taxa)
+                db.joinedload(DOI.compounds.and_(Compounds.status == 'public')),  # Load only public compounds
+                db.joinedload(DOI.taxa)  # Load related taxa
             )
-            .order_by(DOI.doi.asc())
+            .order_by(DOI.doi.asc())  # Order results by DOI
             .limit(100)
             .all()
         )
     else:
         results = []
 
+    # Check if the request is an HTMX request
     if request.headers.get('HX-Request') == 'true':
         return render_template('search_results_doi.html', results=results)
 
@@ -247,19 +248,22 @@ def search_taxon():
             .join(Taxa.dois)  # Join Taxa with DOI through the relationship
             .join(DOI.compounds)  # Join DOI with Compounds to access status
             .filter(Compounds.status == 'public')  # Filter to only public compounds
-            .filter(Taxa.verbatim.ilike(f"%{q}%"))
+            .filter(Taxa.verbatim.ilike(f"%{q}%"))  # Filter Taxa by verbatim search term
             .distinct()
             .options(
-                db.joinedload(Taxa.dois).joinedload(DOI.compounds),
-                db.joinedload(Taxa.dois)
+                db.joinedload(Taxa.dois).joinedload(
+                    DOI.compounds.and_(Compounds.status == 'public')  # Load only public compounds
+                ),
+                db.joinedload(Taxa.dois)  # Load related DOIs
             )
-            .order_by(Taxa.verbatim.asc())
+            .order_by(Taxa.verbatim.asc())  # Order results by Taxa verbatim
             .limit(100)
             .all()
         )
     else:
         results = []
 
+    # Check if the request is an HTMX request
     if request.headers.get('HX-Request') == 'true':
         return render_template('search_results_taxon.html', results=results)
 
