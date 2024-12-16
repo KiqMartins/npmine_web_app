@@ -1,16 +1,18 @@
 {% for result in results %}
     <tr>
-        <td>{{ result.compound_name }}</td>
+        <td>
+            <a href="/compound/{{ result.id }}" target="_blank">{{ result.compound_name }}</a>
+        </td>
         <td>{{ result.smiles }}</td>
         <td>{{ result.inchi_key }}</td>
         <td>
             {% for doi in result.dois %}
-                <a href="{{ doi.doi }}" target="_blank">{{ doi.doi }}</a>{% if not loop.last %}, {% endif %}
+                <a href="https://doi.org/{{ doi.doi }}" target="_blank">{{ doi.doi }}</a>{% if not loop.last %}, {% endif %}
             {% endfor %}
         </td>
     </tr>
 {% else %}
     <tr>
-        <td colspan="2">No results found.</td>
+        <td colspan="4">No results found.</td>
     </tr>
 {% endfor %}

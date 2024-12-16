@@ -1,7 +1,6 @@
 {% extends "layout.html" %}
 
 {% block bannercontent %}
-<!-- Banner -->
 <div class="container">
   <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
@@ -15,7 +14,6 @@
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                 <a class="dropdown-item" href="{{ url_for('main.profile', profile_id=current_user.id) }}">My Profile</a>
-                <!-- Add more dropdown items as needed -->
               </div>
             </div>
             {% endif %}
@@ -65,7 +63,6 @@
       <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
     </div>
     <div class="carousel-inner">
-      <!-- Second page content moved to first carousel item -->
       <div class="carousel-item active" data-bs-interval="10000">
         <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
           <rect width="100%" height="400" fill="var(--bs-secondary-color)"/>
@@ -92,7 +89,6 @@
         </div>
       </div>
   
-      <!-- The third carousel item remains unchanged -->
       <div class="carousel-item" data-bs-interval="10000">
         <svg class="bd-placeholder-img" width="100%" height="300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
           <rect width="100%" height="400" fill="var(--bs-secondary-color)"/>

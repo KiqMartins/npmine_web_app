@@ -1,37 +1,37 @@
-{% for result in results %}
-          <tr>
-            <!-- Display the Taxon verbatim -->
-            <td>{{ result.verbatim }}</td>
+{% for result in results %} 
+    <tr>
+        <!-- Display the Taxon verbatim -->
+        <td>{{ result.verbatim }}</td>
 
-            <!-- Display related Compounds (compound_name only) -->
-            <td>
-              {% set compound_names = [] %}
-              {% if result.dois %}
+        <!-- Display related Compounds (compound_name with hyperlink) -->
+        <td>
+            {% set compound_links = [] %}
+            {% if result.dois %}
                 {% for doi in result.dois %}
-                  {% for compound in doi.compounds %}
-                    {% if compound.compound_name not in compound_names %}
-                      {% set _ = compound_names.append(compound.compound_name) %}
-                    {% endif %}
-                  {% endfor %}
+                    {% for compound in doi.compounds %}
+                        {% if compound.compound_name not in compound_links %}
+                            {% set _ = compound_links.append('<a href="/compound/' ~ compound.id ~ '" target="_blank">' ~ compound.compound_name ~ '</a>') %}
+                        {% endif %}
+                    {% endfor %}
                 {% endfor %}
-              {% endif %}
-              {{ compound_names | join(', ') if compound_names else 'No related compounds' }}
-            </td>
+            {% endif %}
+            {{ compound_links | join(', ') | safe if compound_links else 'No related compounds' }}
+        </td>
 
-            <!-- Display related DOIs -->
-            <td>
-              {% if result.dois %}
+        <!-- Display related DOIs -->
+        <td>
+            {% if result.dois %}
                 {% for doi in result.dois %}
                 <a href="{{ doi.doi }}" target="_blank">{{ doi.doi }}</a>
-                  {% if not loop.last %}, {% endif %}
+                    {% if not loop.last %}, {% endif %}
                 {% endfor %}
-              {% else %}
+            {% else %}
                 No related DOIs
-              {% endif %}
-            </td>
-          </tr>
-        {% else %}
-          <tr>
-            <td colspan="3">No results found.</td>
-          </tr>
-        {% endfor %}
+            {% endif %}
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td colspan="3">No results found.</td>
+    </tr>
+{% endfor %}

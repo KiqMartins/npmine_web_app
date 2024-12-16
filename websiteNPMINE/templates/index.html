@@ -158,11 +158,11 @@
     name: 'Compound Name',
     sort: false,
     formatter: (cell, row) => {
-        if (cell) {
-            return gridjs.html(cell);
-        } else {
-            return '-'; // Display dash if compound_name is empty
-        }
+      if (cell) {
+        return gridjs.html('<a href="/compound/' + row.cells[0].data + '">' + cell + '</a>');
+      } else {
+        return '-'; // Display dash if compound_name is empty
+      }
     }
   },
   {

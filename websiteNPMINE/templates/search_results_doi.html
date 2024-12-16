@@ -3,11 +3,11 @@
         <!-- Display the DOI -->
         <td><a href="{{ result.doi }}" target="_blank">{{ result.doi }}</a></td>
 
-        <!-- Display related Compounds (compound_name only) -->
+        <!-- Display related Compounds (compound_name with hyperlink) -->
         <td>
             {% if result.compounds %}
                 {% for compound in result.compounds %}
-                    {{ compound.compound_name }}
+                    <a href="/compound/{{ compound.id }}" target="_blank">{{ compound.compound_name }}</a>
                     {% if not loop.last %}, {% endif %}
                 {% endfor %}
             {% else %}
