@@ -12,17 +12,16 @@
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
           <li class="nav-item">
-            {% if logged_in %}
-            <div class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Hello, {{ current_user.username }}!
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="{{ url_for('main.profile', profile_id=current_user.id) }}">My Compounds</a>
-                <!-- Add more dropdown items as needed -->
+            {% if current_user.is_authenticated %}
+              <div class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Hello, {{ current_user.username }}!
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <a class="dropdown-item" href="{{ url_for('main.profile', profile_id=current_user.id) }}">My Compounds</a>
+                  </div>
               </div>
-            </div>
-            {% endif %}
+          {% endif %}
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/">Home</a>
@@ -125,9 +124,6 @@
       <div class="btn-group" id="inputSelect" data-toggle="buttons">
         <label id="textButton" class="btn btn-outline-dark">
           <input type="radio" name="inputType" value="text" autocomplete="off"> Text Input
-        </label>
-        <label id="fileButton" class="btn btn-outline-dark">
-          <input type="radio" name="inputType" value="file" autocomplete="off"> Upload File
         </label>
         <label id="drawButton" class="btn btn-outline-dark">
           <input type="radio" name="inputType" value="draw" autocomplete="off"> Draw Molecule
