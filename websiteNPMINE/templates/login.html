@@ -43,12 +43,14 @@
           <div class="form-group">
               {{ form.submit(class="btn btn-dark") }}
           </div>
-          <br>
           <small class="text-muted ml-2">
             <a href="{{ url_for('users.reset_request') }}">Forgot Password?</a>
           </small>
           <br>
           <br>
+          <p class="text-muted ml-2">
+            Request EDITOR or ADMIN access: <a href="https://forms.gle/fnkUPYsEmuVc2Coo8"> Click here!</a>
+          </p>
           <small class="text-muted ml-2">
             Don't have an account yet?<a href="{{ url_for('users.sign_up') }}"> Sign up here</a>
           </small>

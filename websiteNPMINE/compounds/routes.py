@@ -38,6 +38,8 @@ def save_compound_image(compound_id, smiles):
 
     return relative_path
 
+import requests
+
 @compounds.route('/new_compound', methods=['GET', 'POST'])
 @login_required
 def registerCompound():
@@ -83,17 +85,38 @@ def registerCompound():
                     flash(f'Failed to fetch data from PubChem for Compound {i + 1}', 'error')
                     continue
 
+                smiles = pubchem_data.get('smiles')
+                if not smiles:
+                    flash(f'SMILES not found for Compound {i + 1}', 'error')
+                    continue
+
+                # Fetch NP Classifier data
+                try:
+                    np_response = requests.get(f"https://npclassifier.gnps2.org/classify?smiles={smiles}")
+                    if np_response.status_code == 200:
+                        np_data = np_response.json()
+                        class_results = ', '.join(np_data.get('class_results', []))
+                        superclass_results = ', '.join(np_data.get('superclass_results', []))
+                        pathway_results = ', '.join(np_data.get('pathway_results', []))
+                        isglycoside = np_data.get('isglycoside', False)
+                    else:
+                        flash(f'Failed to fetch NP Classifier data for Compound {i + 1}', 'error')
+                        continue
+                except Exception as e:
+                    flash(f'Error fetching NP Classifier data: {e}', 'error')
+                    continue
+
                 compound = Compounds(
                     journal=None,
                     compound_name=pubchem_data['compound_name'],
-                    smiles=pubchem_data['smiles'],
+                    smiles=smiles,
                     article_url=doi,
                     inchi_key=inchikey,
                     exact_molecular_weight=pubchem_data['exact_molecular_weight'],
-                    class_results=None,
-                    superclass_results=None,
-                    pathway_results=None,
-                    isglycoside=None,
+                    class_results=class_results,
+                    superclass_results=superclass_results,
+                    pathway_results=pathway_results,
+                    isglycoside=isglycoside,
                     pubchem_id=pubchem_data['pubchem_id'],
                     inchi=pubchem_data['inchi'],
                     source='NPMine',
@@ -105,7 +128,6 @@ def registerCompound():
                 compound.dois.append(existing_doi)
                 db.session.commit()
 
-                smiles = pubchem_data.get('smiles')
                 img_path = save_compound_image(compound.id, smiles)
                 if img_path:
                     compound.compound_image = img_path
@@ -136,6 +158,7 @@ def registerCompound():
         flash(error[0], 'error')
 
     return render_template('new_compound.html', form=form, logged_in=logged_in)
+
 
 def fetch_pubchem_data(inchikey):
     try:
