@@ -455,6 +455,7 @@ def edit_compound(id):
 
 @compounds.route('/download_compounds', methods=['GET'])
 def download_compounds():
+    logged_in = current_user.is_authenticated
     compounds = Compounds.query.filter_by(status='public').all()
 
     if 'download' in request.args:  
@@ -477,4 +478,5 @@ def download_compounds():
             headers={'Content-Disposition': 'attachment; filename=compounds.csv'}
         )
 
-    return render_template('download_compounds.html', compounds=compounds)
+    return render_template('download_compounds.html', compounds=compounds, logged_in=logged_in)
+
