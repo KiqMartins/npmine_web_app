@@ -75,10 +75,42 @@ def registerCompound():
             existing_compound = Compounds.query.filter_by(inchi_key=inchikey).first()
 
             if existing_compound:
-                if existing_doi not in existing_compound.dois:
-                    existing_compound.dois.append(existing_doi)
+                # Check if the current user already has this compound
+                user_compound = Compounds.query.filter_by(inchi_key=inchikey, user_id=current_user.id).first()
+                if user_compound:
+                    flash(f'You already have this compound with InChI Key {inchikey} in your records.', 'info')
+                else:
+                    # Create a new compound entry for the current user
+                    new_compound = Compounds(
+                        journal=existing_compound.journal,
+                        compound_name=existing_compound.compound_name,
+                        smiles=existing_compound.smiles,
+                        article_url=existing_compound.article_url,
+                        inchi_key=existing_compound.inchi_key,
+                        exact_molecular_weight=existing_compound.exact_molecular_weight,
+                        class_results=existing_compound.class_results,
+                        superclass_results=existing_compound.superclass_results,
+                        pathway_results=existing_compound.pathway_results,
+                        isglycoside=existing_compound.isglycoside,
+                        pubchem_id=existing_compound.pubchem_id,
+                        inchi=existing_compound.inchi,
+                        source=existing_compound.source,
+                        user_id=current_user.id  # Change the user_id to the current user
+                    )
+                    db.session.add(new_compound)
                     db.session.commit()
-                flash(f'Compound with InChI Key {inchikey} already in database; associated with new DOI.', 'info')
+
+                    # Associate the new compound with the DOI
+                    new_compound.dois.append(existing_doi)
+                    db.session.commit()
+
+                    # Save the compound image for the duplicated compound
+                    img_path = save_compound_image(new_compound.id, existing_compound.smiles)
+                    if img_path:
+                        new_compound.compound_image = img_path
+                        db.session.commit()
+
+                    flash(f'Compound with InChI Key {inchikey} duplicated for your account.', 'info')
             else:
                 pubchem_data = fetch_pubchem_data(inchikey)
                 if not pubchem_data:

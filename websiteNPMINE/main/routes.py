@@ -93,7 +93,13 @@ def article(article_id):
     if not doi_record:
         abort(404)
     
-    compounds = doi_record.compounds
+    # Filter compounds: show public compounds or private compounds that belong to the current user
+    if logged_in:
+        compounds = [compound for compound in doi_record.compounds 
+                     if compound.status == 'public' or compound.user_id == current_user.id]
+    else:
+        compounds = [compound for compound in doi_record.compounds 
+                     if compound.status == 'public']
 
     if compounds:
         first_compound = compounds[0]
