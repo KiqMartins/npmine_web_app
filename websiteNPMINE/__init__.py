@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
 import os
-from websiteNPMINE.config import Config
+from websiteNPMINE.config import Config, DevelopmentConfig, ProductionConfig
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap4
@@ -23,12 +23,21 @@ csrf = CSRFProtect()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
-    app.config.from_object(config_class)
     bcrypt.init_app(app)
     db.init_app(app)
     bootstrap.init_app(app)
     mail.init_app(app)
     csrf.init_app(app)
+    if config_class is None:
+        env = os.environ.get('FLASK_ENV')
+        if env == 'development':
+            config_class = DevelopmentConfig
+        elif env == 'production':
+            config_class = ProductionConfig
+        else:
+            config_class = DevelopmentConfig 
+
+    app.config.from_object(config_class)
 
     login_manager.init_app(app)
 

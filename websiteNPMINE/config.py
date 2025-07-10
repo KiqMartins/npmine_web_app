@@ -13,4 +13,14 @@ class Config:
     MAIL_USE_TLS = os.getenv('MAIL_USE_TLS')
     MAIL_USERNAME = os.getenv('EMAIL_USER')
     MAIL_PASSWORD = os.getenv('EMAIL_PASS')
-    
+    TEMPLATES_AUTO_RELOAD = True
+
+class DevelopmentConfig(Config):
+    DEBUG = True # Ensure debug is True for dev
+    TEMPLATES_AUTO_RELOAD = True
+    # ... other dev-specific settings
+
+class ProductionConfig(Config):
+    DEBUG = False
+    TEMPLATES_AUTO_RELOAD = False # Explicitly false or omit for prod
+    # ... other prod-specific settings
