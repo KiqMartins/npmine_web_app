@@ -23,11 +23,7 @@ csrf = CSRFProtect()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
-    bcrypt.init_app(app)
-    db.init_app(app)
-    bootstrap.init_app(app)
-    mail.init_app(app)
-    csrf.init_app(app)
+
     if config_class is None:
         env = os.environ.get('FLASK_ENV')
         if env == 'development':
@@ -38,7 +34,12 @@ def create_app(config_class=Config):
             config_class = DevelopmentConfig 
 
     app.config.from_object(config_class)
-
+    
+    bcrypt.init_app(app)
+    db.init_app(app)
+    bootstrap.init_app(app)
+    mail.init_app(app)
+    csrf.init_app(app)
     login_manager.init_app(app)
 
     from websiteNPMINE.users.routes import users
