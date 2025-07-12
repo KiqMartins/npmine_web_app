@@ -1,3 +1,6 @@
+# docker-compose.yml (This file is for your development environment)
+version: '3.8'
+
 services:
   db:
     image: postgres:13
@@ -17,10 +20,12 @@ services:
       timeout: 2s
 
   web:
-    build: .
+    build: . 
     environment:
-      FLASK_ENV: development 
-      SQLALCHEMY_DATABASE_URI: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME} 
+      FLASK_ENV: development
+      FLASK_APP: websiteNPMINE:create_app()
+      FLASK_DEBUG: 1
+      SQLALCHEMY_DATABASE_URI: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
       SECRET_KEY: ${SECRET_KEY}
       SQLALCHEMY_TRACK_MODIFICATIONS: ${SQLALCHEMY_TRACK_MODIFICATIONS}
       TEMP_FOLDER: ${TEMP_FOLDER}
@@ -36,6 +41,7 @@ services:
       - "5000:5000"
     volumes:
       - .:/app 
+    command: bash -c "conda run -n npmine_web_app_prod flask db upgrade && conda run -n npmine_web_app_prod python populate_database.py && conda run -n npmine_web_app_prod flask run --host 0.0.0.0 --port 5000"
 
 volumes:
   postgres_data:

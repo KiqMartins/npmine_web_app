@@ -21,7 +21,7 @@ mail = Mail()
 csrf = CSRFProtect()
 
 
-def create_app(config_class=Config):
+def create_app(config_class=None):
     app = Flask(__name__)
 
     if config_class is None:
